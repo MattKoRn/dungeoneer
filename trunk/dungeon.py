@@ -78,12 +78,45 @@ class Room:
         self.id = Room.id
         Room.id += 1
 
-class Maze:
-    def __init__(self, rows, cols,player):
+class Grid:
+    def __init__(self, rows, cols):
         self.rows = rows
         self.cols = cols
-        self.maze = []
+        self.grid = []
+        self.wraparound = True
+        for r in range(rows):
+            row = []
+            for c in range(cols):
+                row.append(0)
+            self.grid.append(row)
+
+    def __getitem__(self,c):
+        if type(c) == int:
+            return self.maze[c]
+        elif type(c) == Coord and self.validCoord(c):
+            return self.maze[c[0]][c[1]]
+        elif len(c) == 2:
+            if self.wraparound:
+                lowerRowLimit = (self.rows) * -1
+                lowerColLimit = (self.cols) * -1
+            else:
+                lowerRowLimit = lowerColLimit = 0
+            if c[0] >= lowerRowLimit and\
+               c[0] < self.rows and\
+               c[1] >= lowerColLimit and\
+               c[1] < self.cols:
+                return self.grid[c[0]][c[1]]
+            else:
+                return None
+        else:
+            raise TypeError
+
+class Maze(Grid):
+    def __init__(self, rows, cols,player):
+        Grid.__init__(self,rows,cols)
+        self.maze = self.grid
         self.player = player
+        self.wraparound = False
         
     def newmaze(self):
         self.maze = []
@@ -100,19 +133,6 @@ class Maze:
         if c[1] < 0 or c[1] >= self.cols:
             retval = False
         return retval
-
-    def __getitem__(self,c):
-        if type(c) == int:
-            return self.maze[c]
-        elif type(c) == Coord and self.validCoord(c):
-            return self.maze[c[0]][c[1]]
-        elif len(c) == 2:
-            if c[0] >= 0 and c[0] < self.rows and c[1] >= 0 and c[1] < self.cols:
-                return self.maze[c[0]][c[1]]
-            else:
-                return None
-        else:
-            raise TypeError
 
     def generate(self):
         self.newmaze()
@@ -144,19 +164,6 @@ class Maze:
                 visited += 1
             else:
                 c = visitedStack.pop()
-
-    def generateVisibleGrid(self,visibleGrid,r,c,pr,pc,direction,dist,maxDist):
-        if dist != maxDist:
-            visibleGrid[r][c] = 1
-            for ex in EXITORDER:
-                if self[pr+r,pc+c].exits[ex] != -1 and \
-                   visibleGrid[r+EXITS[ex].deltar][c+EXITS[ex].deltac] == 0 and\
-                   ex != EXITS[direction].opposite:
-                    self.generateVisibleGrid(visibleGrid,r+EXITS[ex].deltar,\
-                                             c+EXITS[ex].deltac,pr,pc,direction,\
-                                             dist+1,maxDist)
-        else:
-            visibleGrid[r][c] = 2
 
     def displayMap(self,pr,pc,light):
         ''' Display's player's map of the area around him.
