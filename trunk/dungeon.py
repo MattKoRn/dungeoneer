@@ -30,6 +30,10 @@ class Direction:
         self.deltar = deltar
         self.deltac = deltac
         self.opposite = opposite
+        self.delta = (deltar, deltac)
+
+    def coordMove(self, coord, dist):
+        return map(lambda x,y: x+y, coord, map(lambda x: x*dist, self.delta))
 
 EXITS = {}
 EXITS['n'] = Direction('n',-1,0,'s')
