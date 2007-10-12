@@ -32,13 +32,13 @@ class Coord:
         return self.coord[item]
 
     def __add__(self, other):
-        if type(other) != Coord:
-            raise TypeError "Can't add types coord and " + type(other)
+        if other.__class__ != Coord:
+            raise TypeError, "Can't add types coord and " + str(other.__class__)
         return Coord(self.row + other.row, self.col + other.col)
 
-    def __mult__(self, other):
+    def __mul__(self, other):
         if type(other) != int:
-            raise TypeError: "Can't multiply types coord and " + type(other)
+            raise TypeError, "Can't multiply types coord and " + str(other.__class__)
         return Coord(self.row * other, self.col * other)
 
     def __str__(self):
@@ -46,8 +46,7 @@ class Coord:
 
 class Player:
     def __init__(self):
-        self.row = 2
-        self.col = 3
+        self.loc = Coord(2,3)
 
 class Direction:
     def __init__(self, name, deltar, deltac, opposite):
@@ -78,6 +77,12 @@ class Room:
         self.id = Room.id
         Room.id += 1
 
+    def see_items(self):
+        return random.random() > .5
+
+    def hear_monsters(self):
+        return random.random() > .5
+
 class Grid:
     def __init__(self, rows, cols):
         self.rows = rows
@@ -90,11 +95,28 @@ class Grid:
                 row.append(0)
             self.grid.append(row)
 
+    def validCoord(self,c):
+        retval = False
+        if self.wraparound:
+            lowerRowLimit = (self.rows) * -1
+            lowerColLimit = (self.cols) * -1
+        else:
+            lowerRowLimit = lowerColLimit = 0
+        if c[0] >= lowerRowLimit and\
+           c[0] < self.rows and\
+           c[1] >= lowerColLimit and\
+           c[1] < self.cols:
+            retval = True
+        return retval
+
     def __getitem__(self,c):
-        if type(c) == int:
-            return self.maze[c]
-        elif type(c) == Coord and self.validCoord(c):
-            return self.maze[c[0]][c[1]]
+        if c.__class__ == int:
+            return self.grid[c]
+        elif c.__class__ == Coord:
+            if self.validCoord(c):
+                return self.grid[c[0]][c[1]]
+            else:
+                return None
         elif len(c) == 2:
             if self.wraparound:
                 lowerRowLimit = (self.rows) * -1
@@ -111,6 +133,30 @@ class Grid:
         else:
             raise TypeError
 
+    def __setitem__(self,c,val):
+        if c.__class__ == Coord:
+            if self.validCoord(c):
+                self.grid[c[0]][c[1]] = val
+        elif len(c) == 2:
+            if self.wraparound:
+                lowerRowLimit = (self.rows) * -1
+                lowerColLimit = (self.cols) * -1
+            else:
+                lowerRowLimit = lowerColLimit = 0
+            if c[0] >= lowerRowLimit and\
+               c[0] < self.rows and\
+               c[1] >= lowerColLimit and\
+               c[1] < self.cols:
+                self.grid[c[0]][c[1]] = val
+        else:
+            raise TypeError
+
+    def pop(self, row):
+        self.grid.pop(row)
+
+    def __len__(self):
+        return len(self.grid)
+
 class Maze(Grid):
     def __init__(self, rows, cols,player):
         Grid.__init__(self,rows,cols)
@@ -120,6 +166,7 @@ class Maze(Grid):
         
     def newmaze(self):
         self.maze = []
+        self.grid = self.maze
         for r in range(self.rows):
             row = []
             for c in range(self.cols):
@@ -141,7 +188,7 @@ class Maze(Grid):
         if DEBUG:
             print c
         
-        self.maze[c].visited = 1
+        self[c].visited = 1
         visitedStack = []
         visited = 1
         while visited < self.rows*self.cols:
@@ -165,7 +212,7 @@ class Maze(Grid):
             else:
                 c = visitedStack.pop()
 
-    def displayMap(self,pr,pc,light):
+    def displayMap(self,pc,light):
         ''' Display's player's map of the area around him.
         Displays current room at light 0, displays one additional
         room around for each light level above 1.
@@ -176,20 +223,45 @@ class Maze(Grid):
         n: Monster. Any alphabet letter.
         '''
 
-        visibleGrid = []
         visiblerows = visiblecols = light * 2 + 1
-        for r in range(visiblerows):
-            row = []
-            for c in range(visiblecols):
-                row.append(0)
-            visibleGrid.append(row)
+        visibleGrid = Grid(visiblerows, visiblecols)
 
-        visibleGrid[0][0] = 1
-        if light > 0:
-            for ex in EXITORDER:
-                if self[pr,pc].exits[ex] != -1:
-                    self.generateVisibleGrid(visibleGrid,EXITS[ex].deltar,\
-                                             EXITS[ex].deltac,pr,pc,ex,1,light)
+        SEE_ROOM = 1
+        SEE_THINGS = 2
+        HEAR_MONSTER = 4
+
+        visibleGrid[0][0] += SEE_ROOM
+
+        for ex in EXITORDER:
+            dist = 0
+            delta = EXITS[ex].delta
+            while dist+1 < light:
+                if self[pc + delta].exits[ex] != -1:
+                    dist += 1
+                    delta = EXITS[ex].coordMove(Coord(0,0),dist)
+                    visibleGrid[delta] += SEE_ROOM
+                    if self[pc+delta].see_items():
+                        visibleGrid[delta] += SEE_THINGS
+                    if self[pc+delta].hear_monsters():
+                        visibleGrid[delta] += HEAR_MONSTER
+
+                    # Now listen for monsters to the left and right
+                    if dist+1 <= light:
+                        for ex2 in EXITORDER:
+                            if ex2 != ex and ex2 != EXITS[ex].opposite and\
+                               self[pc + delta].exits[ex2] != -1 and\
+                               visibleGrid[delta + EXITS[ex2].delta] == 0:
+                                if self[pc + delta + EXITS[ex2].delta].hear_monsters():
+                                    visibleGrid[delta + EXITS[ex2].delta] += HEAR_MONSTER
+                else:
+                    break
+            if self[pc+delta].exits[ex] != -1 and \
+               self[pc+delta+EXITS[ex].delta].hear_monsters():
+                visibleGrid[delta + EXITS[ex].delta] += HEAR_MONSTER
+                
+                    
+                    
+        
 
         startr = -light
         finishr = light+1
@@ -255,11 +327,12 @@ class Maze(Grid):
         for row in range(startr,finishr):
             out = ""
             for col in range(startc,finishc):
+                c = Coord(row,col)
                 if visibleGrid[row][col] == 0:
                     out += " " * 5
                 else:
                     out += "+-"
-                    if self[pr+row,pc+col].exits['n'] != -1:
+                    if self[pc+c].exits['n'] != -1:
                         out += " "
                     else:
                         out += "-"
@@ -268,18 +341,27 @@ class Maze(Grid):
 
             out = ""
             for col in range(startc,finishc):
+                c = Coord(row,col)
                 if visibleGrid[row][col] == 0:
                     out += " " * 5
+                elif visibleGrid[row][col] == HEAR_MONSTER:
+                    out += "  !  "
                 else:
-                    if self[pr+row, pc+col].exits['w'] != -1:
-                        out += "  "
+                    if self[pc + c].exits['w'] != -1:
+                        out += " "
                     else:
-                        out += "| "
-                    if row == 0 and col == 0:
-                        out += "@"
+                        out += "|"
+                    if visibleGrid[row][col] & SEE_THINGS:
+                        out += "$"
                     else:
                         out += " "
-                    if self[pr+row, pc+col].exits['e'] != -1:
+                    if row == 0 and col == 0:
+                        out += "@"
+                    elif visibleGrid[row][col] & HEAR_MONSTER:
+                        out += "!"
+                    else:
+                        out += " "
+                    if self[pc+c].exits['e'] != -1:
                         out += "  "
                     else:
                         out += " |"
@@ -287,11 +369,12 @@ class Maze(Grid):
 
             out = ""
             for col in range(startc,finishc):
+                c = Coord(row, col)
                 if visibleGrid[row][col] == 0:
                     out += " " * 5
                 else:
                     out += "+-"
-                    if self[pr+row,pc+col].exits['s'] != -1:
+                    if self[pc+c].exits['s'] != -1:
                         out += " "
                     else:
                         out += "-"
@@ -324,7 +407,7 @@ class Maze(Grid):
                         out += "| "
                     else:
                         out += "  "
-                    if r == self.player.row and c == self.player.col:
+                    if r == self.player.loc.row and c == self.player.loc.col:
                         out += "@"
                     else:
                         out += " "
@@ -353,5 +436,5 @@ p = Player()
 m = Maze(5,7,p)
 m.generate()
 m.display()
-for row in m.displayMap(2,3,4):
+for row in m.displayMap(Coord(2,3),4):
     print row
