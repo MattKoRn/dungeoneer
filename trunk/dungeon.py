@@ -19,28 +19,6 @@ if DEBUG:
         ret = leftside + ret + rightside
         return ret
 
-def slope(p1, p2, x2 = None, y2 = None):
-    if y2 == None:
-        if x2 != None:
-            raise TypeError, "slope() requires 2 2-tuples or 4 numbers"
-        else:
-            if len(x2) != 2 or len(y2) != 2:
-                raise TypeError, "slope() requires 2 2-tuples or 4 numbers"
-            else:
-                x1, y1 = p1
-                x2, y2 = p2
-    else:
-        x1 = p1
-        y1 = p2
-
-    if x2 == x1:
-        if y2-y1 > 0:
-            return "inf"
-        else:
-            return "ninf"
-    else:
-        return (y2-y1) / (x2-x1)
-
 class Player:
     def __init__(self):
         self.row = 2
