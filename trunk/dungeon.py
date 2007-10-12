@@ -58,7 +58,6 @@ class Direction:
         self.delta = Coord(deltar, deltac)
 
     def coordMove(self, coord, dist):
-        return map(lambda x,y: x+y, coord, map(lambda x: x*dist, self.delta))
         return coord + self.delta * dist
 
 EXITS = {}
