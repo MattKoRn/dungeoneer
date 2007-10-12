@@ -73,8 +73,8 @@ class Room:
     id = 0
     def __init__(self):
         self.exits = {}
-        for exit in EXITORDER:
-            self.exits[exit] = -1
+        for ex in EXITORDER:
+            self.exits[ex] = -1
         self.visited = 0
         self.id = Room.id
         Room.id += 1
