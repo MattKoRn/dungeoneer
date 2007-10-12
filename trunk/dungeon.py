@@ -19,6 +19,31 @@ if DEBUG:
         ret = leftside + ret + rightside
         return ret
 
+class Coord:
+    def __init__(self, row, col):
+        self.row = row
+        self.col = col
+        self.coord = (row,col)
+
+    def __getitem__(self, item):
+        if item != 1 and item != 0:
+            raise IndexError
+
+        return self.coord[item]
+
+    def __add__(self, other):
+        if type(other) != Coord:
+            raise TypeError "Can't add types coord and " + type(other)
+        return Coord(self.row + other.row, self.col + other.col)
+
+    def __mult__(self, other):
+        if type(other) != int:
+            raise TypeError: "Can't multiply types coord and " + type(other)
+        return Coord(self.row * other, self.col * other)
+
+    def __str__(self):
+        return "(" + str(self.row) + "," + str(self.col) + ")"
+
 class Player:
     def __init__(self):
         self.row = 2
@@ -30,10 +55,11 @@ class Direction:
         self.deltar = deltar
         self.deltac = deltac
         self.opposite = opposite
-        self.delta = (deltar, deltac)
+        self.delta = Coord(deltar, deltac)
 
     def coordMove(self, coord, dist):
         return map(lambda x,y: x+y, coord, map(lambda x: x*dist, self.delta))
+        return coord + self.delta * dist
 
 EXITS = {}
 EXITS['n'] = Direction('n',-1,0,'s')
@@ -70,8 +96,6 @@ class Maze:
 
     def validCoord(self,c):
         retval = True
-        if len(c) != 2:
-            retval = False
         if c[0] < 0 or c[0] >= self.rows:
             retval = False
         if c[1] < 0 or c[1] >= self.cols:
@@ -81,6 +105,8 @@ class Maze:
     def __getitem__(self,c):
         if type(c) == int:
             return self.maze[c]
+        elif type(c) == Coord and self.validCoord(c):
+            return self.maze[c[0]][c[1]]
         elif len(c) == 2:
             if c[0] >= 0 and c[0] < self.rows and c[1] >= 0 and c[1] < self.cols:
                 return self.maze[c[0]][c[1]]
@@ -91,36 +117,34 @@ class Maze:
 
     def generate(self):
         self.newmaze()
-        r = random.randint(0,self.rows-1)
-        c = random.randint(0,self.cols-1)
+        c = Coord(random.randint(0,self.rows-1),random.randint(0,self.cols-1))
 
         if DEBUG:
-            print r,c
+            print c
         
-        self.maze[r][c].visited = 1
+        self.maze[c].visited = 1
         visitedStack = []
         visited = 1
         while visited < self.rows*self.cols:
             adjacentRooms = []
 
             for ex in EXITORDER:
-                if self[r+EXITS[ex].deltar, c+EXITS[ex].deltac] != None and \
-                   self[r+EXITS[ex].deltar, c+EXITS[ex].deltac].visited == False:
+                if self[c+EXITS[ex].delta] != None and \
+                   self[c+EXITS[ex].delta].visited == False:
                     adjacentRooms.append(ex)
                     
             if len(adjacentRooms) > 0:
                 direction = random.choice(adjacentRooms)
-                nextR = r + EXITS[direction].deltar
-                nextC = c + EXITS[direction].deltac
+                nextC = c + EXITS[direction].delta
                 oppDir = EXITS[direction].opposite
-                self[r,c].exits[direction] = self[nextR,nextC].id
-                self[nextR,nextC].exits[oppDir] = self[r,c].id
-                self[nextR,nextC].visited = True
-                visitedStack.append((r,c))
-                r,c = nextR, nextC
+                self[c].exits[direction] = self[nextC].id
+                self[nextC].exits[oppDir] = self[c].id
+                self[nextC].visited = True
+                visitedStack.append(c)
+                c = nextC
                 visited += 1
             else:
-                r,c = visitedStack.pop()
+                c = visitedStack.pop()
 
     def generateVisibleGrid(self,visibleGrid,r,c,pr,pc,direction,dist,maxDist):
         if dist != maxDist:
