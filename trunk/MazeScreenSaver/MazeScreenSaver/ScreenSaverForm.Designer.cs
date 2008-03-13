@@ -47,7 +47,6 @@
             this.ShowIcon = false;
             this.Text = "ScreenSaverForm";
             this.TopMost = true;
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.ScreenSaverForm_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.ScreenSaverForm_Paint);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ScreenSaverForm_MouseClick);
