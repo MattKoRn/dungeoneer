@@ -42,7 +42,8 @@ namespace MazeScreenSaver
             Size = new Size(width, height);            
             FormBorderStyle = FormBorderStyle.None;
             //WindowState = FormWindowState.Maximized;
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.Manual;
+            this.Location = new Point(0, 0);
             ShowInTaskbar = false;
             DoubleBuffered = true;
             BackgroundImageLayout = ImageLayout.Stretch;
