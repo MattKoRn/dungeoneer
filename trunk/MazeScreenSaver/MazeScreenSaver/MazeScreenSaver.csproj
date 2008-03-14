@@ -71,6 +71,7 @@
     <Compile Include="OptionsForm.Designer.cs">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="PreviewDisplay.cs" />
     <Compile Include="PreviewDisplayForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -118,6 +119,35 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\dg_dungeon32.gif" />
+    <None Include="Tiles\smalltiles\floor29.png" />
+    <None Include="Tiles\smalltiles\floor28.png" />
+    <None Include="Tiles\smalltiles\floor27.png" />
+    <None Include="Tiles\smalltiles\floor26.png" />
+    <None Include="Tiles\smalltiles\floor25.png" />
+    <None Include="Tiles\smalltiles\floor24.png" />
+    <None Include="Tiles\smalltiles\floor23.png" />
+    <None Include="Tiles\smalltiles\floor22.png" />
+    <None Include="Tiles\smalltiles\floor21.png" />
+    <None Include="Tiles\smalltiles\floor20.png" />
+    <None Include="Tiles\smalltiles\floor19.png" />
+    <None Include="Tiles\smalltiles\floor18.png" />
+    <None Include="Tiles\smalltiles\floor17.png" />
+    <None Include="Tiles\smalltiles\floor16.png" />
+    <None Include="Tiles\smalltiles\floor15.png" />
+    <None Include="Tiles\smalltiles\floor14.png" />
+    <None Include="Tiles\smalltiles\floor13.png" />
+    <None Include="Tiles\smalltiles\floor12.png" />
+    <None Include="Tiles\smalltiles\floor11.png" />
+    <None Include="Tiles\smalltiles\floor10.png" />
+    <None Include="Tiles\smalltiles\floor9.png" />
+    <None Include="Tiles\smalltiles\floor8.png" />
+    <None Include="Tiles\smalltiles\floor7.png" />
+    <None Include="Tiles\smalltiles\floor6.png" />
+    <None Include="Tiles\smalltiles\floor5.png" />
+    <None Include="Tiles\smalltiles\floor4.png" />
+    <None Include="Tiles\smalltiles\floor3.png" />
+    <None Include="Tiles\smalltiles\floor2.png" />
+    <None Include="Tiles\smalltiles\floor30.png" />
     <None Include="Tiles\smalltiles\floor1.png" />
     <None Include="Tiles\smalltiles\wall1.png" />
     <None Include="Tiles\dg_features32.gif" />

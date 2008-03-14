@@ -45,6 +45,7 @@
             this.MinimizeBox = false;
             this.Name = "ScreenSaverForm";
             this.ShowIcon = false;
+            this.ShowInTaskbar = false;
             this.Text = "ScreenSaverForm";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.ScreenSaverForm_Load);
