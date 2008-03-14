@@ -60,6 +60,13 @@ namespace MazeScreenSaver.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap floor1 {
+            get {
+                object obj = ResourceManager.GetObject("floor1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap mazeFeatures {
             get {
                 object obj = ResourceManager.GetObject("mazeFeatures", resourceCulture);
@@ -70,6 +77,13 @@ namespace MazeScreenSaver.Properties {
         internal static System.Drawing.Bitmap mazeTiles {
             get {
                 object obj = ResourceManager.GetObject("mazeTiles", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap wall1 {
+            get {
+                object obj = ResourceManager.GetObject("wall1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
