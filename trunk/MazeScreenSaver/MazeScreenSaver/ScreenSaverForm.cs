@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using MazeScreenSaver.Properties;
+using System.Diagnostics;
 
 namespace MazeScreenSaver
 {
@@ -36,8 +37,8 @@ namespace MazeScreenSaver
             int width = 0, height = 0;
             foreach(Screen screen in Screen.AllScreens)
             {
-                width += screen.Bounds.Width;
-                height += screen.Bounds.Height;
+                width = Math.Max(width, screen.Bounds.Width + screen.Bounds.X);
+                height = Math.Max(height, screen.Bounds.Height + screen.Bounds.Y);
             }
             Size = new Size(width, height);            
             FormBorderStyle = FormBorderStyle.None;
@@ -84,8 +85,8 @@ namespace MazeScreenSaver
                 m_OffsetX = (Width - m_TilesWide * 32)/2;
                 m_OffsetY = (Height - m_TilesHigh * 32)/2;
 
-                m_WallTile = new Tile(Resources.mazeTiles, 0, 0);
-                m_FloorTile = new Tile(Resources.mazeFeatures, 2, 0);
+                m_WallTile = new Tile(Resources.wall1, 0, 0);
+                m_FloorTile = new Tile(Resources.floor1, 0, 0);
             }
             catch (Exception error)
             {
@@ -101,6 +102,7 @@ namespace MazeScreenSaver
             {
                 if (m_Maze != null)
                 {
+                    Stopwatch timer = Stopwatch.StartNew();
                     for (int r = 0; r < m_TilesWide; r++)
                     {
                         for (int c = 0; c < m_TilesHigh; c++)
@@ -111,6 +113,9 @@ namespace MazeScreenSaver
                                 m_FloorTile.Draw(e.Graphics, r * 32 + m_OffsetX, c * 32 + m_OffsetY);
                         }
                     }
+                    timer.Stop();
+                    if (m_logFile != null)
+                        m_logFile.WriteLine(DateTime.Now.ToString() + ": Redrawing maze took " + timer.ElapsedTicks.ToString() + " ticks.");
                 }
                 else
                 {
@@ -120,6 +125,7 @@ namespace MazeScreenSaver
                     m_RegenTimer.Interval = 1000 * 15;
                     m_RegenTimer.Start();
                 }
+                
                 m_Maze = new Maze(m_TilesWide, m_TilesHigh);
                 m_Maze.generate();
             }
