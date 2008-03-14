@@ -118,6 +118,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\dg_dungeon32.gif" />
+    <None Include="Tiles\smalltiles\floor1.png" />
+    <None Include="Tiles\smalltiles\wall1.png" />
     <None Include="Tiles\dg_features32.gif" />
   </ItemGroup>
   <ItemGroup>
