@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace MazeScreenSaver
 {
-    public partial class PreviewDisplayForm : Form
+    class PreviewDisplay
     {
         [DllImport("user32.dll")]
         private static extern bool GetClientRect(IntPtr hWnd, ref RECT rect);
@@ -21,17 +19,12 @@ namespace MazeScreenSaver
         private Rectangle m_clientRect;
         private Timer m_timer;
 
-        public PreviewDisplayForm()
+        public PreviewDisplay(IntPtr parentHwnd)
         {
-            InitializeComponent();
+            m_parentHwnd = parentHwnd;
         }
 
-        private struct RECT
-        {
-            public int left, top, right, bottom;
-        }
-
-        private void PreviewDisplay_Load(object sender, EventArgs e)
+        public void Run()
         {
             RECT rect = new RECT();
             GetClientRect(m_parentHwnd, ref rect);
@@ -40,8 +33,12 @@ namespace MazeScreenSaver
             m_timer.Interval = 500;
             m_timer.Tick += timer_tick;
             m_timer.Start();
-            Hide();
             Draw();
+        }
+
+        private struct RECT
+        {
+            public int left, top, right, bottom;
         }
 
         private void Draw()

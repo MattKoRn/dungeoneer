@@ -21,6 +21,8 @@ namespace MazeScreenSaver
         private int m_OffsetX, m_OffsetY;
         private Tile m_WallTile, m_FloorTile;
         private Timer m_RegenTimer;
+        private int MAX_FLOORS = 30;
+        private Tile[] m_FloorTiles;
 
         public ScreenSaverForm()
         {
@@ -51,6 +53,33 @@ namespace MazeScreenSaver
             m_MousePosition = Cursor.Position;
         }
 
+        private void ScreenSaverForm_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                m_TilesWide = Width / 32;
+                m_TilesHigh = Height / 32;
+                m_OffsetX = (Width - m_TilesWide * 32) / 2;
+                m_OffsetY = (Height - m_TilesHigh * 32) / 2;
+
+                m_WallTile = new Tile(Resources.wall1, 0, 0);
+                m_FloorTile = new Tile((Bitmap)Resources.ResourceManager.GetObject("floor1"), 0, 0);
+
+                m_FloorTiles = new Tile[MAX_FLOORS+1];
+
+                for (int i = 1; i <= MAX_FLOORS; i++)
+                {
+                    m_FloorTiles[i] = new Tile((Bitmap)Resources.ResourceManager.GetObject("floor" + i.ToString()), 0, 0);
+                }
+            }
+            catch (Exception error)
+            {
+                m_logFile.Write("Exception encountered: " + error.Message);
+                m_logFile.Close();
+                Application.Exit();
+            }
+        }
+
         private void ScreenSaverForm_MouseMove(object sender, MouseEventArgs e)
         {
             if (m_logFile != null)
@@ -76,25 +105,7 @@ namespace MazeScreenSaver
             Cursor.Show();
         }
 
-        private void ScreenSaverForm_Load(object sender, EventArgs e)
-        {
-            try
-            {
-                m_TilesWide = Width / 32;
-                m_TilesHigh = Height / 32;
-                m_OffsetX = (Width - m_TilesWide * 32)/2;
-                m_OffsetY = (Height - m_TilesHigh * 32)/2;
 
-                m_WallTile = new Tile(Resources.wall1, 0, 0);
-                m_FloorTile = new Tile(Resources.floor1, 0, 0);
-            }
-            catch (Exception error)
-            {
-                m_logFile.Write("Exception encountered: " + error.Message);
-                m_logFile.Close();
-                Application.Exit();
-            }
-        }
 
         private void ScreenSaverForm_Paint(object sender, PaintEventArgs e)
         {
@@ -107,10 +118,15 @@ namespace MazeScreenSaver
                     {
                         for (int c = 0; c < m_TilesHigh; c++)
                         {
-                            if (m_Maze[r, c])
+                            if (m_Maze[r, c] == -1)
                                 m_WallTile.Draw(e.Graphics, r * 32 + m_OffsetX, c * 32 + m_OffsetY);
                             else
-                                m_FloorTile.Draw(e.Graphics, r * 32 + m_OffsetX, c * 32 + m_OffsetY);
+                            {
+                                if (m_Maze[r, c] < MAX_FLOORS)
+                                    m_FloorTiles[m_Maze[r, c]].Draw(e.Graphics, r * 32 + m_OffsetX, c * 32 + m_OffsetY);
+                                else
+                                    m_FloorTile.Draw(e.Graphics, r * 32 + m_OffsetX, c * 32 + m_OffsetY);
+                            }
                         }
                     }
                     timer.Stop();
@@ -128,6 +144,7 @@ namespace MazeScreenSaver
                 
                 m_Maze = new Maze(m_TilesWide, m_TilesHigh);
                 m_Maze.generate();
+                m_Maze.FindFloorRegions();
             }
             catch (Exception error)
             {

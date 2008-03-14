@@ -44,9 +44,11 @@ namespace MazeScreenSaver
 
         static void ShowPreview(IntPtr parentHwnd)
         {
-            PreviewDisplayForm previewDisplay = new PreviewDisplayForm();
-            previewDisplay.m_parentHwnd = parentHwnd;
-            Application.Run(previewDisplay);
+            //PreviewDisplayForm previewDisplay = new PreviewDisplayForm();
+            //previewDisplay.m_parentHwnd = parentHwnd;
+            //Application.Run(previewDisplay);
+            PreviewDisplay previewDisplay = new PreviewDisplay(parentHwnd);
+            previewDisplay.Run();
         }
 
         static void ShowOptions()

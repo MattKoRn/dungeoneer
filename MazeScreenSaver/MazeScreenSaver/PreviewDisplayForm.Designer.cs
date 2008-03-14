@@ -39,13 +39,14 @@
             this.textBox1.Size = new System.Drawing.Size(268, 81);
             this.textBox1.TabIndex = 1;
             // 
-            // PreviewDisplay
+            // PreviewDisplayForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(292, 268);
             this.Controls.Add(this.textBox1);
-            this.Name = "PreviewDisplay";
+            this.Name = "PreviewDisplayForm";
+            this.Opacity = 0;
             this.Text = "PreviewDisplay";
             this.Load += new System.EventHandler(this.PreviewDisplay_Load);
             this.ResumeLayout(false);

@@ -121,6 +121,93 @@
   <data name="floor1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Tiles\smalltiles\floor1.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="floor10" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor10.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor11" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor11.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor12" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor12.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor13" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor13.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor14" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor14.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor15" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor15.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor17" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor17.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor18" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor18.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor19" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor19.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor2.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor20" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor20.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor21" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor21.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor22" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor22.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor23" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor23.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor24" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor24.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor25" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor25.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor26" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor26.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor27" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor27.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor28" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor28.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor29" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor29.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor3" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor3.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor30" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor30.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor4" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor4.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor5" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor5.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor6.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor7" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor7.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor8" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor8.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="floor9" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Tiles\smalltiles\floor9.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="mazeFeatures" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Tiles\dg_features32.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
