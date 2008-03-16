@@ -2,9 +2,104 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Drawing;
 
 namespace MazeScreenSaver
 {
+    class FOVLine
+    {
+        private Point m_Near, m_Far;
+
+        public FOVLine()
+        {
+            near = new Point(0,0);
+            far = new Point(0,0);
+        }
+
+        public FOVLine(Point near, Point far)
+        {
+            m_Near = near;
+            m_Far = far;
+        }
+
+        public Point Near
+        {
+            get { return m_Near; }
+            set { m_Near = value; }
+        }
+
+        public Point Far
+        {
+            get { return m_Far; }
+            set { m_Far = value; }
+        }
+
+        public bool isBelow(Point pt)
+        {
+            return relativeSlope(pt) > 0;
+        }
+
+        public bool isBelowOrContains(Point pt)
+        {
+            return relativeSlope(pt) >= 0;
+        }
+
+        public bool isAbove(Point pt)
+        {
+            return relativeSlope(pt) < 0;
+        }
+
+        public bool isAboveOrContains(Point pt)
+        {
+            return relativeSlope(pt) <= 0;
+        }
+
+        public bool contains(Point pt)
+        {
+            return relativeSlope == 0;
+        }
+
+        /// <summary>
+        /// Returns slope relative to the supplied point
+        /// Negative: line is above point. Positive: line is below point. Zero: line contains point.
+        /// </summary>
+        private bool relativeSlope(Point pt)
+        {
+            return (m_Far.Y - m_Near.Y) * (m_Far.X - pt.X) - (m_Far.Y - pt.Y) * (m_Far.X - m_Near.X);
+        }
+    }
+
+    class FOVBump
+    {
+        private Point m_Bump;
+
+        public Point Bump
+        {
+            get { return m_Bump; }
+            set { m_Bump = value; }
+        }
+
+        private FOVBump m_Parent;
+
+        public FOVBump Parent
+        {
+            get { return m_Parent; }
+            set { m_Parent = value; }
+        }
+
+        public FOVBump()
+        {
+            m_Bump = Point.Empty;
+            m_Parent = null;
+        }
+    }
+
+    class FOVField
+    {
+        public FOVLine steep, shallow;
+        public FOVBump steepBump, shallowBump;
+    }
+
     class Maze
     {
         int[,] m_maze;
@@ -22,8 +117,8 @@ namespace MazeScreenSaver
         {
             get
             {
+                FixCoords(ref row, ref col);
                 
-
                 if(row >= m_rows
                     || row < 0)
                     throw new ArgumentOutOfRangeException("row");
@@ -31,6 +126,14 @@ namespace MazeScreenSaver
                     || col < 0)
                     throw new ArgumentOutOfRangeException("col");
                 return m_maze[row, col];
+            }
+        }
+
+        public int this[Point coord]
+        {
+            get
+            {
+                return this[coord.X, coord.Y];
             }
         }
 
@@ -95,5 +198,14 @@ namespace MazeScreenSaver
             while (col < 0)
                 col += m_cols;
         }
+
+        public List<Point> GetFOVAt(Point source, int radius)
+        {
+            List<Point> FOVTiles = new List<Point>();
+            FOVTiles.Add(source);
+
+        }
+
+        private void 
     }
 }

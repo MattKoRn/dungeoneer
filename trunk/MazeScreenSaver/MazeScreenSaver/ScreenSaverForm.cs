@@ -14,7 +14,6 @@ namespace MazeScreenSaver
 {
     public partial class ScreenSaverForm : Form
     {
-        private StreamWriter m_logFile = null;
         private Point m_MousePosition;
         private Maze m_Maze;
         private int m_TilesWide, m_TilesHigh;
@@ -27,8 +26,8 @@ namespace MazeScreenSaver
         public ScreenSaverForm()
         {
             InitializeComponent();
-//            m_logFile = new StreamWriter("MazeScreenSaverLog.txt");
-//            m_logFile.WriteLine(DateTime.Now.ToString() + ": Screensaver Started");
+            Log.m_LogOn = false;
+            Log.Write("Screensaver Started");
             // Use double buffering to improve drawing performance
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
             // Capture the mouse
@@ -74,38 +73,29 @@ namespace MazeScreenSaver
             }
             catch (Exception error)
             {
-                m_logFile.Write("Exception encountered: " + error.Message);
-                m_logFile.Close();
+                Log.Write("Exception encountered: " + error.Message);
                 Application.Exit();
             }
         }
 
         private void ScreenSaverForm_MouseMove(object sender, MouseEventArgs e)
         {
-            if (m_logFile != null)
-                m_logFile.WriteLine(DateTime.Now.ToString() + ": MouseMove Event, Mouse Location:" + e.Location.ToString());
+            Log.Write("MouseMove Event, Mouse Location:" + e.Location.ToString());
             if (Math.Sqrt(Math.Pow(m_MousePosition.X - e.X, 2) + Math.Pow(m_MousePosition.Y - e.Y, 2)) >= 3)
                 Close();
         }
 
         private void ScreenSaverForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (m_logFile != null)
-                m_logFile.WriteLine(DateTime.Now.ToString() + ": KeyDown Event");
+            Log.Write("KeyDown Event");
             Close();
         }
 
         private void ScreenSaverForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (m_logFile != null)
-            {
-                m_logFile.WriteLine(DateTime.Now.ToString() + ": Screensaver Closing");
-                m_logFile.Close();
-            }
+            Log.Write("Screensaver Closing");
             Cursor.Show();
         }
-
-
 
         private void ScreenSaverForm_Paint(object sender, PaintEventArgs e)
         {
@@ -130,8 +120,7 @@ namespace MazeScreenSaver
                         }
                     }
                     timer.Stop();
-                    if (m_logFile != null)
-                        m_logFile.WriteLine(DateTime.Now.ToString() + ": Redrawing maze took " + timer.ElapsedTicks.ToString() + " ticks.");
+                    Log.Write("Redrawing maze took " + timer.ElapsedTicks.ToString() + " ticks.");
                 }
                 else
                 {
@@ -148,23 +137,20 @@ namespace MazeScreenSaver
             }
             catch (Exception error)
             {
-                m_logFile.Write("Exception encountered: " + error.Message);
-                m_logFile.Close();
+                Log.Write("Exception encountered: " + error.Message);
                 Application.Exit();
             }
         }
 
         void m_RegenTimer_Tick(object sender, EventArgs e)
         {
-            if(m_logFile != null)
-                m_logFile.Write(DateTime.Now.ToString() + ": RegenTimer_Tick");
+            Log.Write("RegenTimer Tick");
             this.Invalidate();
         }
 
         private void ScreenSaverForm_MouseClick(object sender, MouseEventArgs e)
         {
-            if (m_logFile != null)
-                m_logFile.WriteLine(DateTime.Now.ToString() + ": MouseClick Event");
+            Log.Write("MouseClick Event");
             Close();
         }
     }

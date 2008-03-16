@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Log.cs" />
     <Compile Include="Maze.cs" />
     <Compile Include="OptionsForm.cs">
       <SubType>Form</SubType>
