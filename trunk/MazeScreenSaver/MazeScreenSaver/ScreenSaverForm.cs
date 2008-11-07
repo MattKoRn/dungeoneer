@@ -26,8 +26,8 @@ namespace MazeScreenSaver
         public ScreenSaverForm()
         {
             InitializeComponent();
-            Log.m_LogOn = false;
-            Log.Write("Screensaver Started");
+            //Log.m_LogOn = false;
+            //Log.Write("Screensaver Started");
             // Use double buffering to improve drawing performance
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
             // Capture the mouse
@@ -70,30 +70,31 @@ namespace MazeScreenSaver
                 {
                     m_FloorTiles[i] = new Tile((Bitmap)Resources.ResourceManager.GetObject("floor" + i.ToString()), 0, 0);
                 }
+                Cursor.Hide();
             }
             catch (Exception error)
             {
-                Log.Write("Exception encountered: " + error.Message);
+                //Log.Write("Exception encountered: " + error.Message);
                 Application.Exit();
             }
         }
 
         private void ScreenSaverForm_MouseMove(object sender, MouseEventArgs e)
         {
-            Log.Write("MouseMove Event, Mouse Location:" + e.Location.ToString());
+            //Log.Write("MouseMove Event, Mouse Location:" + e.Location.ToString());
             if (Math.Sqrt(Math.Pow(m_MousePosition.X - e.X, 2) + Math.Pow(m_MousePosition.Y - e.Y, 2)) >= 3)
                 Close();
         }
 
         private void ScreenSaverForm_KeyDown(object sender, KeyEventArgs e)
         {
-            Log.Write("KeyDown Event");
+            //Log.Write("KeyDown Event");
             Close();
         }
 
         private void ScreenSaverForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Log.Write("Screensaver Closing");
+            //Log.Write("Screensaver Closing");
             Cursor.Show();
         }
 
@@ -120,7 +121,7 @@ namespace MazeScreenSaver
                         }
                     }
                     timer.Stop();
-                    Log.Write("Redrawing maze took " + timer.ElapsedTicks.ToString() + " ticks.");
+                    //Log.Write("Redrawing maze took " + timer.ElapsedTicks.ToString() + " ticks.");
                 }
                 else
                 {
@@ -133,24 +134,24 @@ namespace MazeScreenSaver
                 
                 m_Maze = new Maze(m_TilesWide, m_TilesHigh);
                 m_Maze.generate();
-                m_Maze.FindFloorRegions();
+                m_Maze.fixFloorType();
             }
             catch (Exception error)
             {
-                Log.Write("Exception encountered: " + error.Message);
+                //Log.Write("Exception encountered: " + error.Message);
                 Application.Exit();
             }
         }
 
         void m_RegenTimer_Tick(object sender, EventArgs e)
         {
-            Log.Write("RegenTimer Tick");
+            //Log.Write("RegenTimer Tick");
             this.Invalidate();
         }
 
         private void ScreenSaverForm_MouseClick(object sender, MouseEventArgs e)
         {
-            Log.Write("MouseClick Event");
+            //Log.Write("MouseClick Event");
             Close();
         }
     }
