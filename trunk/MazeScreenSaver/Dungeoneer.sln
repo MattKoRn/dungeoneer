@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C# Express 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MazeScreenSaver", "MazeScreenSaver\MazeScreenSaver.csproj", "{37F37BBA-BCC9-4CD1-AD52-200E6A47AD6C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dungeoneer", "MazeScreenSaver\Dungeoneer.csproj", "{37F37BBA-BCC9-4CD1-AD52-200E6A47AD6C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
