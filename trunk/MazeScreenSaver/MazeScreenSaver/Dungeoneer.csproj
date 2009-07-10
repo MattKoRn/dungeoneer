@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{37F37BBA-BCC9-4CD1-AD52-200E6A47AD6C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -64,7 +64,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Log.cs" />
     <Compile Include="Maze.cs" />
     <Compile Include="OptionsForm.cs">
       <SubType>Form</SubType>
