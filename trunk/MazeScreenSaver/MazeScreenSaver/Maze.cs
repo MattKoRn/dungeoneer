@@ -137,6 +137,10 @@ namespace MazeScreenSaver
             {
                 return this[coord.X, coord.Y];
             }
+            set
+            {
+                m_maze[coord.X, coord.Y] = value;
+            }
         }
 
         public void generate()
