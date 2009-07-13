@@ -71,6 +71,7 @@
     <Compile Include="OptionsForm.Designer.cs">
       <DependentUpon>OptionsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Player.cs" />
     <Compile Include="PreviewDisplay.cs" />
     <Compile Include="PreviewDisplayForm.cs">
       <SubType>Form</SubType>
@@ -119,6 +120,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\dg_dungeon32.gif" />
+    <None Include="Resources\player.png" />
+    <None Include="Resources\stairs.png" />
+    <None Include="Resources\stairs.bmp" />
     <None Include="Tiles\smalltiles\floor29.png" />
     <None Include="Tiles\smalltiles\floor28.png" />
     <None Include="Tiles\smalltiles\floor27.png" />

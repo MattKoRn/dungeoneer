@@ -105,6 +105,7 @@ namespace MazeScreenSaver
         int[,] m_maze;
         int m_rows, m_cols;
         List<int> floorTypeCount;
+        List<List<Point>> floorTypeMembers;
 
         public Maze(int rows, int cols)
         {
@@ -159,6 +160,9 @@ namespace MazeScreenSaver
             int floorNum = 1;
             floorTypeCount = new List<int>();
             floorTypeCount.Add(0);
+
+            floorTypeMembers = new List<List<Point>>();
+            floorTypeMembers.Add(new List<Point>());
             for (int r = 0; r < m_rows; r++)
             {
                 for (int c = 0; c < m_cols; c++)
@@ -166,6 +170,7 @@ namespace MazeScreenSaver
                     if (this[r, c] == 0)
                     {
                         floorTypeCount.Add(0);
+                        floorTypeMembers.Add(new List<Point>());
                         FloodFillFloor(r, c, floorNum);
                         floorNum++;
                     }
@@ -221,6 +226,7 @@ namespace MazeScreenSaver
             {
                 m_maze[row, col] = floorval;
                 floorTypeCount[floorval] += 1;
+                floorTypeMembers[floorval].Add(new Point(row, col));
 
                 FloodFillFloor(row - 1, col - 1, floorval);
                 FloodFillFloor(row - 1, col, floorval);
@@ -231,6 +237,18 @@ namespace MazeScreenSaver
                 FloodFillFloor(row + 1, col, floorval);
                 FloodFillFloor(row + 1, col + 1, floorval);
             }
+        }
+
+        public Point RandomSquare()
+        {
+            return this.RandomSquare(1);
+        }
+
+        public Point RandomSquare(int floortype)
+        {
+            Random r = new Random();
+            int size = floorTypeMembers[floortype].Count();
+            return floorTypeMembers[floortype][r.Next(size)];
         }
 
         private void FixCoords(ref int row, ref int col)
@@ -250,6 +268,27 @@ namespace MazeScreenSaver
             List<Point> FOVTiles = new List<Point>();
             FOVTiles.Add(source);
             return FOVTiles;
+        }
+
+        public List<Point> GetAdjacentFloors(Point source)
+        {
+            List<Point> retval = new List<Point>();
+            int floortype = this[source];
+            for (int dr = -1; dr <= 1; dr++)
+            {
+                for (int dc = -1; dc <= 1; dc++)
+                {
+                    if (dr == 0 && dc == 0)
+                        continue;
+
+                    int r = source.X + dr;
+                    int c = source.Y + dc;
+                    this.FixCoords(ref r, ref c);
+                    if (m_maze[r, c] == floortype)
+                        retval.Add(new Point(r, c));
+                }
+            }
+            return retval;
         }
 
         //private void 
