@@ -136,6 +136,7 @@ namespace MazeScreenSaver
                         m_FloorTiles[m_Maze[p.previousCoord]].Draw(e.Graphics, p.previousCoord.X * 32 + m_OffsetX, p.previousCoord.Y * 32 + m_OffsetY);
                     }
                     m_PlayerTile.Draw(e.Graphics, p.coord.X * 32 + m_OffsetX, p.coord.Y * 32 + m_OffsetY);
+                    
                     timer.Stop();
                     //Log.Write("Redrawing maze took " + timer.ElapsedTicks.ToString() + " ticks.");
                 }
