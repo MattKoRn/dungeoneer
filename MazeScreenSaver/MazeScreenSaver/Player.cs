@@ -26,14 +26,14 @@ namespace MazeScreenSaver
         {
             availableMoves = moves;
             preferredMoves = new List<Point>();
-            oldestBacktrack = new Point(0,0);
+            oldestBacktrack = new Point(-1, -1);
             foreach (Point p in moves)
             {
                 if (!visitedCoords.Contains(p))
                     preferredMoves.Add(p);
                 else
                 {
-                    if (oldestBacktrack == new Point(0, 0))
+                    if (oldestBacktrack == new Point(-1, -1))
                         oldestBacktrack = p;
                     else
                     {
