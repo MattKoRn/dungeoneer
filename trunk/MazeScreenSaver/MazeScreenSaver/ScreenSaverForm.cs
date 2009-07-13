@@ -177,8 +177,13 @@ namespace MazeScreenSaver
 
         void m_MoveTimer_Tick(object sender, EventArgs e)
         {
-            p.setAvailableMoves(m_Maze.GetAdjacentFloors(p.coord));
-            p.move();
+            if (p.coord == stairsCoords)
+                newMaze = true;
+            else
+            {
+                p.setAvailableMoves(m_Maze.GetAdjacentFloors(p.coord));
+                p.move();
+            }
             this.Invalidate();
         }
 
