@@ -19,9 +19,15 @@ namespace MazeScreenSaver
         private int m_TilesWide, m_TilesHigh;
         private int m_OffsetX, m_OffsetY;
         private Tile m_WallTile, m_FloorTile;
+        private Tile m_StairsTile;
+        private Tile m_PlayerTile;
         private Timer m_RegenTimer;
+        private Timer m_MoveTimer;
         private int MAX_FLOORS = 30;
         private Tile[] m_FloorTiles;
+        private Point stairsCoords;
+        private Player p;
+        private bool newMaze = true;
 
         public ScreenSaverForm()
         {
@@ -63,6 +69,10 @@ namespace MazeScreenSaver
 
                 m_WallTile = new Tile(Resources.wall1, 0, 0);
                 m_FloorTile = new Tile((Bitmap)Resources.ResourceManager.GetObject("floor1"), 0, 0);
+                m_StairsTile = new Tile(Resources.stairs, 0, 0);
+                Bitmap playerBMP = Resources.player;
+                playerBMP.MakeTransparent(Color.Black);
+                m_PlayerTile = new Tile(playerBMP, 0, 0);
 
                 m_FloorTiles = new Tile[MAX_FLOORS+1];
 
@@ -120,6 +130,12 @@ namespace MazeScreenSaver
                             }
                         }
                     }
+                    m_StairsTile.Draw(e.Graphics, stairsCoords.X * 32 + m_OffsetX, stairsCoords.Y * 32 + m_OffsetY);
+                    if (p.previousCoord != null)
+                    {
+                        m_FloorTiles[m_Maze[p.previousCoord]].Draw(e.Graphics, p.previousCoord.X * 32 + m_OffsetX, p.previousCoord.Y * 32 + m_OffsetY);
+                    }
+                    m_PlayerTile.Draw(e.Graphics, p.coord.X * 32 + m_OffsetX, p.coord.Y * 32 + m_OffsetY);
                     timer.Stop();
                     //Log.Write("Redrawing maze took " + timer.ElapsedTicks.ToString() + " ticks.");
                 }
@@ -130,11 +146,26 @@ namespace MazeScreenSaver
                     m_RegenTimer.Tick += new EventHandler(m_RegenTimer_Tick);
                     m_RegenTimer.Interval = 1000 * 15;
                     m_RegenTimer.Start();
+
+                    m_MoveTimer = new Timer();
+                    m_MoveTimer.Tick += new EventHandler(m_MoveTimer_Tick);
+                    m_MoveTimer.Interval = 500;
+                    m_MoveTimer.Start();
                 }
-                
-                m_Maze = new Maze(m_TilesWide, m_TilesHigh);
-                m_Maze.generate();
-                m_Maze.fixFloorType();
+
+                if (newMaze)
+                {
+                    m_Maze = new Maze(m_TilesWide, m_TilesHigh);
+                    m_Maze.generate();
+                    m_Maze.fixFloorType();
+                    stairsCoords = m_Maze.RandomSquare();
+                    p = new Player();
+                    do
+                    {
+                        p.coord = m_Maze.RandomSquare();
+                    } while (p.coord.X == stairsCoords.X && p.coord.Y == stairsCoords.Y);
+                    newMaze = false;
+                }
             }
             catch (Exception error)
             {
@@ -143,9 +174,17 @@ namespace MazeScreenSaver
             }
         }
 
+        void m_MoveTimer_Tick(object sender, EventArgs e)
+        {
+            p.setAvailableMoves(m_Maze.GetAdjacentFloors(p.coord));
+            p.move();
+            this.Invalidate();
+        }
+
         void m_RegenTimer_Tick(object sender, EventArgs e)
         {
             //Log.Write("RegenTimer Tick");
+            newMaze = true;
             this.Invalidate();
         }
 
