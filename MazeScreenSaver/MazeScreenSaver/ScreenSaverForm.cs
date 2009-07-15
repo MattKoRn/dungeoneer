@@ -28,12 +28,14 @@ namespace MazeScreenSaver
         private Point stairsCoords;
         private Player p;
         private bool newMaze = true;
+        private Logger Log;
 
         public ScreenSaverForm()
         {
             InitializeComponent();
+            Log = new Logger();
             //Log.m_LogOn = false;
-            //Log.Write("Screensaver Started");
+            Log.Write("Screensaver Started");
             // Use double buffering to improve drawing performance
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
             // Capture the mouse
@@ -84,32 +86,33 @@ namespace MazeScreenSaver
             }
             catch (Exception error)
             {
-                //Log.Write("Exception encountered: " + error.Message);
+                Log.Write("Exception encountered in Load: " + error.Message);
                 Application.Exit();
             }
         }
 
         private void ScreenSaverForm_MouseMove(object sender, MouseEventArgs e)
         {
-            //Log.Write("MouseMove Event, Mouse Location:" + e.Location.ToString());
+            Log.Write("MouseMove Event, Mouse Location:" + e.Location.ToString() + " Current Mouse Location:" + m_MousePosition.ToString());
             if (Math.Sqrt(Math.Pow(m_MousePosition.X - e.X, 2) + Math.Pow(m_MousePosition.Y - e.Y, 2)) >= 3)
                 Close();
         }
 
         private void ScreenSaverForm_KeyDown(object sender, KeyEventArgs e)
         {
-            //Log.Write("KeyDown Event");
+            Log.Write("KeyDown Event");
             Close();
         }
 
         private void ScreenSaverForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //Log.Write("Screensaver Closing");
+            Log.Write("Screensaver Closing");
             Cursor.Show();
         }
 
         private void ScreenSaverForm_Paint(object sender, PaintEventArgs e)
         {
+            int tile = 0;
             try
             {
                 if (m_Maze != null)
@@ -131,9 +134,10 @@ namespace MazeScreenSaver
                         }
                     }
                     m_StairsTile.Draw(e.Graphics, stairsCoords.X * 32 + m_OffsetX, stairsCoords.Y * 32 + m_OffsetY);
-                    if (p.previousCoord != null)
+                    if (p.has_moved)
                     {
-                        m_FloorTiles[m_Maze[p.previousCoord]].Draw(e.Graphics, p.previousCoord.X * 32 + m_OffsetX, p.previousCoord.Y * 32 + m_OffsetY);
+                        tile = m_Maze[p.previousCoord];
+                        m_FloorTiles[tile].Draw(e.Graphics, p.previousCoord.X * 32 + m_OffsetX, p.previousCoord.Y * 32 + m_OffsetY);
                     }
                     m_PlayerTile.Draw(e.Graphics, p.coord.X * 32 + m_OffsetX, p.coord.Y * 32 + m_OffsetY);
 
@@ -156,6 +160,7 @@ namespace MazeScreenSaver
 
                 if (newMaze)
                 {
+                    Log.Write("New maze");
                     m_Maze = new Maze(m_TilesWide, m_TilesHigh);
                     m_Maze.generate();
                     m_Maze.fixFloorType();
@@ -165,15 +170,17 @@ namespace MazeScreenSaver
                     {
                         p.coord = m_Maze.RandomSquare();
                     } while (p.coord.X == stairsCoords.X && p.coord.Y == stairsCoords.Y);
+                    p.stairsCoord = stairsCoords;
                     newMaze = false;
 
                     m_RegenTimer.Stop();
                     m_RegenTimer.Start();
+                    Log.Write("New Maze created");
                 }
             }
             catch (Exception error)
             {
-                //Log.Write("Exception encountered: " + error.Message);
+                Log.Write("Exception encountered in Paint: " + error.Message + error.StackTrace);
                 Application.Exit();
             }
         }
@@ -199,7 +206,7 @@ namespace MazeScreenSaver
 
         private void ScreenSaverForm_MouseClick(object sender, MouseEventArgs e)
         {
-            //Log.Write("MouseClick Event");
+            Log.Write("MouseClick Event");
             Close();
         }
     }
