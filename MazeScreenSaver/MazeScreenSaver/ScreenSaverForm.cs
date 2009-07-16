@@ -175,43 +175,65 @@ namespace MazeScreenSaver
 
                 if (newMaze)
                 {
-                    Log.Write("New maze");
-                    m_Maze = new Maze(m_TilesWide, m_TilesHigh);
-                    m_Maze.generate();
-                    m_Maze.fixFloorType();
-                    stairsCoords = m_Maze.RandomSquare();
-                    p = new Player();
-                    int tries;
-                    tries = 0;
-                    do
-                    {
-                        Point point = m_Maze.RandomSquare();
-                        p.coord = point;
-                        tries += 1;
-                        if (tries > 1000)
-                        {
-                            Log.Write("Stuck trying to find open square. (tries = " + tries.ToString() + ")",2);
-                            Log.Write("Stairs at: " + stairsCoords.ToString(),2);
-                            string squaresString = "Squares in this region:";
-                            foreach (Point pt in m_Maze.floorTypeMembers[1])
-                                squaresString += pt.ToString();
-                            Log.Write(squaresString,2);
-                            Log.Write("Anyway, I'm giving up now.",2);
-                            Application.Exit();
-                        }
-                    } while (p.coord.X == stairsCoords.X && p.coord.Y == stairsCoords.Y);
-                    p.stairsCoord = stairsCoords;
-                    newMaze = false;
-
-                    m_RegenTimer.Stop();
-                    m_RegenTimer.Start();
-                    Log.Write("New Maze created");
+                    bool mazeGenComplete = false;
+                    while(!mazeGenComplete)
+                        mazeGenComplete = RegenMaze();
                 }
             }
             catch (Exception error)
             {
                 Log.Write("Exception encountered in Paint: " + error.Message + error.StackTrace, 2);
                 Application.Exit();
+            }
+        }
+
+        private bool RegenMaze()
+        {
+            try
+            {
+                Log.Write("New maze");
+                m_Maze = new Maze(m_TilesWide, m_TilesHigh);
+                m_Maze.generate();
+                m_Maze.fixFloorType();
+                stairsCoords = m_Maze.RandomSquare();
+                p = new Player();
+                int tries;
+                tries = 0;
+                bool giveup = false;
+                do
+                {
+                    Point point = m_Maze.RandomSquare();
+                    p.coord = point;
+                    tries += 1;
+                    if (tries > 1000)
+                    {
+                        Log.Write("Stuck trying to find open square. (tries = " + tries.ToString() + ")", 2);
+                        Log.Write("Stairs at: " + stairsCoords.ToString(), 2);
+                        string squaresString = "Squares in this region:";
+                        foreach (Point pt in m_Maze.floorTypeMembers[1])
+                            squaresString += pt.ToString();
+                        Log.Write(squaresString, 2);
+                        Log.Write("Anyway, I'm giving up now.", 2);
+                        giveup = true;
+                    }
+                } while (p.coord.X == stairsCoords.X && p.coord.Y == stairsCoords.Y && !giveup);
+                if (!giveup)
+                {
+                    p.stairsCoord = stairsCoords;
+                    newMaze = false;
+
+                    m_RegenTimer.Stop();
+                    m_RegenTimer.Start();
+                    Log.Write("New Maze created");
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception error)
+            {
+                Log.Write("Exception occurred in RegenMaze:" + error.Message + error.StackTrace, 2);
+                Application.Exit();
+                return false;
             }
         }
 
