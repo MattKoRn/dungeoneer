@@ -188,6 +188,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>copy /y $(TargetFileName) $(TargetName).scr</PostBuildEvent>
+    <PostBuildEvent>copy /y $(TargetFileName) $(TargetName).scr
+copy /y $(TargetName).scr c:\windows\system32\</PostBuildEvent>
   </PropertyGroup>
 </Project>

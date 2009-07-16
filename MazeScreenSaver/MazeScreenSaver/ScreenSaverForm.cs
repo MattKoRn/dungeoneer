@@ -28,14 +28,17 @@ namespace MazeScreenSaver
         private Point stairsCoords;
         private Player p;
         private bool newMaze = true;
+        private bool can_log;
         private Logger Log;
 
         public ScreenSaverForm()
         {
             InitializeComponent();
+            getRegistryLogSetting();
             Log = new Logger();
+            Log.enableLogging(can_log);
             //Log.m_LogOn = false;
-            Log.Write("Screensaver Started");
+            Log.Write("Screensaver Started",2);
             // Use double buffering to improve drawing performance
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
             // Capture the mouse
@@ -58,6 +61,15 @@ namespace MazeScreenSaver
             DoubleBuffered = true;
             BackgroundImageLayout = ImageLayout.Stretch;
             m_MousePosition = Cursor.Position;
+        }
+
+        private void getRegistryLogSetting()
+        {
+            string keyPath = "HKEY_CURRENT_USER\\Software\\Dungeoneer";
+            if (Microsoft.Win32.Registry.GetValue(keyPath, "enableLogging", null) != null)
+            {
+                can_log = ((int)Microsoft.Win32.Registry.GetValue(keyPath, "enableLogging", null) == 1);
+            }
         }
 
         private void ScreenSaverForm_Load(object sender, EventArgs e)
@@ -86,7 +98,7 @@ namespace MazeScreenSaver
             }
             catch (Exception error)
             {
-                Log.Write("Exception encountered in Load: " + error.Message);
+                Log.Write("Exception encountered in Load: " + error.Message,2);
                 Application.Exit();
             }
         }
@@ -95,18 +107,21 @@ namespace MazeScreenSaver
         {
             Log.Write("MouseMove Event, Mouse Location:" + e.Location.ToString() + " Current Mouse Location:" + m_MousePosition.ToString());
             if (Math.Sqrt(Math.Pow(m_MousePosition.X - e.X, 2) + Math.Pow(m_MousePosition.Y - e.Y, 2)) >= 3)
+            {
+                Log.Write("MouseMove was too large", 2);
                 Close();
+            }
         }
 
         private void ScreenSaverForm_KeyDown(object sender, KeyEventArgs e)
         {
-            Log.Write("KeyDown Event");
+            Log.Write("KeyDown Event",2);
             Close();
         }
 
         private void ScreenSaverForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Log.Write("Screensaver Closing");
+            Log.Write("Screensaver Closing",2);
             Cursor.Show();
         }
 
@@ -166,9 +181,19 @@ namespace MazeScreenSaver
                     m_Maze.fixFloorType();
                     stairsCoords = m_Maze.RandomSquare();
                     p = new Player();
+                    int tries = 0;
                     do
                     {
                         p.coord = m_Maze.RandomSquare();
+                        tries += 1;
+                        if (tries > 1000)
+                        {
+                            Log.Write("Stuck trying to find open square.",2);
+                            Log.Write("Stairs at: " + stairsCoords.ToString(),2);
+                            Log.Write("Squares in this region:" + m_Maze.floorTypeMembers[1].ToString(),2);
+                            Log.Write("Anyway, I'm giving up now.",2);
+                            Application.Exit();
+                        }
                     } while (p.coord.X == stairsCoords.X && p.coord.Y == stairsCoords.Y);
                     p.stairsCoord = stairsCoords;
                     newMaze = false;
@@ -180,7 +205,7 @@ namespace MazeScreenSaver
             }
             catch (Exception error)
             {
-                Log.Write("Exception encountered in Paint: " + error.Message + error.StackTrace);
+                Log.Write("Exception encountered in Paint: " + error.Message + error.StackTrace, 2);
                 Application.Exit();
             }
         }
@@ -206,7 +231,7 @@ namespace MazeScreenSaver
 
         private void ScreenSaverForm_MouseClick(object sender, MouseEventArgs e)
         {
-            Log.Write("MouseClick Event");
+            Log.Write("MouseClick Event", 2);
             Close();
         }
     }
