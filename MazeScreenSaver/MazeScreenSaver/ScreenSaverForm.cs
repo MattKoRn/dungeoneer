@@ -38,7 +38,7 @@ namespace MazeScreenSaver
             Log = new Logger();
             Log.enableLogging(can_log);
             //Log.m_LogOn = false;
-            Log.Write("Screensaver Started",2);
+            Log.Write("Screensaver Started (" + DateTime.Now.ToString("T") + ")", 2);
             // Use double buffering to improve drawing performance
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
             // Capture the mouse
@@ -121,7 +121,7 @@ namespace MazeScreenSaver
 
         private void ScreenSaverForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            Log.Write("Screensaver Closing",2);
+            Log.Write("Screensaver Closing (" + DateTime.Now.ToString("T") + ")",2);
             Cursor.Show();
         }
 
