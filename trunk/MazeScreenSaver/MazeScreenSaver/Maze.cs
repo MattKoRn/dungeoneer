@@ -105,7 +105,7 @@ namespace MazeScreenSaver
         int[,] m_maze;
         int m_rows, m_cols;
         List<int> floorTypeCount;
-        List<List<Point>> floorTypeMembers;
+        public List<List<Point>> floorTypeMembers;
 
         public Maze(int rows, int cols)
         {
