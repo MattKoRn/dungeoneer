@@ -17,11 +17,13 @@ namespace MazeScreenSaver
         private bool is_backtracking;
         public bool has_moved = false;
         public Point stairsCoord;
+        private Random rand;
 
         public Player()
         {
             coord = new Point(0, 0);
             visitedCoords = new List<Point>();
+            rand = new Random();
         }
 
         public void setAvailableMoves(List<Point> moves)
@@ -56,7 +58,6 @@ namespace MazeScreenSaver
 
         public void move()
         {
-            Random r = new Random();
             previousCoord = coord;
             if (preferredMoves.Contains(stairsCoord))
             {
@@ -64,7 +65,7 @@ namespace MazeScreenSaver
             }
             if (preferredMoves.Count() > 0)
             {
-                coord = preferredMoves[r.Next(preferredMoves.Count())];
+                coord = preferredMoves[rand.Next(preferredMoves.Count())];
                 visitedCoords.Add(coord);
                 is_backtracking = false;
             }

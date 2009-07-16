@@ -181,16 +181,21 @@ namespace MazeScreenSaver
                     m_Maze.fixFloorType();
                     stairsCoords = m_Maze.RandomSquare();
                     p = new Player();
-                    int tries = 0;
+                    int tries;
+                    tries = 0;
                     do
                     {
-                        p.coord = m_Maze.RandomSquare();
+                        Point point = m_Maze.RandomSquare();
+                        p.coord = point;
                         tries += 1;
                         if (tries > 1000)
                         {
-                            Log.Write("Stuck trying to find open square.",2);
+                            Log.Write("Stuck trying to find open square. (tries = " + tries.ToString() + ")",2);
                             Log.Write("Stairs at: " + stairsCoords.ToString(),2);
-                            Log.Write("Squares in this region:" + m_Maze.floorTypeMembers[1].ToString(),2);
+                            string squaresString = "Squares in this region:";
+                            foreach (Point pt in m_Maze.floorTypeMembers[1])
+                                squaresString += pt.ToString();
+                            Log.Write(squaresString,2);
                             Log.Write("Anyway, I'm giving up now.",2);
                             Application.Exit();
                         }

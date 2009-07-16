@@ -35,7 +35,7 @@ namespace MazeScreenSaver
                 Directory.CreateDirectory(Directory.GetParent(logfile).ToString());
 
             FileInfo fi = new FileInfo(logfile);
-            if (fi.Length > 1024 * 1024 * 10 && importance < 2)
+            if (fi.Exists && fi.Length > 1024 * 1024 * 10 && importance < 2)
                 return;
 
             StreamWriter file = new StreamWriter(logfile, true);

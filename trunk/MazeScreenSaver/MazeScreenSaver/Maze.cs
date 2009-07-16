@@ -106,11 +106,13 @@ namespace MazeScreenSaver
         int m_rows, m_cols;
         List<int> floorTypeCount;
         public List<List<Point>> floorTypeMembers;
+        Random rand;
 
         public Maze(int rows, int cols)
         {
             m_rows = rows;
             m_cols = cols;
+            rand = new Random();
 
             m_maze = new int[rows, cols];
         }
@@ -145,13 +147,11 @@ namespace MazeScreenSaver
 
         public void generate()
         {
-            Random rng = new Random();
-
             for (int r = 0; r < m_rows; r++)
             {
                 for (int c = 0; c < m_cols; c++)
                 {
-                    if (rng.Next(2) == 0)
+                    if (rand.Next(2) == 0)
                         m_maze[r, c] = -1;
                     else
                         m_maze[r, c] = 0;
@@ -250,9 +250,8 @@ namespace MazeScreenSaver
 
         public Point RandomSquare(int floortype)
         {
-            Random r = new Random();
             int size = floorTypeMembers[floortype].Count();
-            return floorTypeMembers[floortype][r.Next(size)];
+            return floorTypeMembers[floortype][rand.Next(size)];
         }
 
         private void FixCoords(ref int row, ref int col)
