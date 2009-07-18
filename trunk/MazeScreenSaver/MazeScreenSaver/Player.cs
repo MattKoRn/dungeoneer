@@ -74,8 +74,7 @@ namespace MazeScreenSaver
                 coord = stairsCoord;
                 is_backtracking = false;
             }
-
-            if (preferredMoves.Count() == 0)
+            else if (preferredMoves.Count() == 0)
             {
                 coord = oldestBacktrack;
                 facing = Direction.getDirection(coord, previousCoord);
