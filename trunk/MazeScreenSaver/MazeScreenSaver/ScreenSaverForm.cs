@@ -161,9 +161,12 @@ namespace MazeScreenSaver
                         }
                     }
                     m_StairsTile.Draw(e.Graphics, stairsCoords.X * 32 + m_OffsetX, stairsCoords.Y * 32 + m_OffsetY);
-                    foreach(Point point in p.getVisitedCoords())
+                    if (show_trails)
                     {
-                        m_PlayerTrailTile.Draw(e.Graphics, point.X* 32 + m_OffsetX, point.Y * 32 + m_OffsetY);
+                        foreach (Point point in p.getVisitedCoords())
+                        {
+                            m_PlayerTrailTile.Draw(e.Graphics, point.X * 32 + m_OffsetX, point.Y * 32 + m_OffsetY);
+                        }
                     }
                     m_PlayerTile.Draw(e.Graphics, p.coord.X * 32 + m_OffsetX, p.coord.Y * 32 + m_OffsetY);
 
