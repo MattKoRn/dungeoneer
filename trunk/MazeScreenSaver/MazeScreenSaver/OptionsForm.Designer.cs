@@ -31,6 +31,7 @@
             this.check_enableLogging = new System.Windows.Forms.CheckBox();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.checkTrails = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // check_enableLogging
@@ -46,7 +47,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(12, 35);
+            this.btnOK.Location = new System.Drawing.Point(5, 85);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 1;
@@ -57,7 +58,7 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(94, 35);
+            this.btnCancel.Location = new System.Drawing.Point(87, 85);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 2;
@@ -65,12 +66,23 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // checkTrails
+            // 
+            this.checkTrails.AutoSize = true;
+            this.checkTrails.Location = new System.Drawing.Point(12, 35);
+            this.checkTrails.Name = "checkTrails";
+            this.checkTrails.Size = new System.Drawing.Size(115, 17);
+            this.checkTrails.TabIndex = 3;
+            this.checkTrails.Text = "Show Visited Trails";
+            this.checkTrails.UseVisualStyleBackColor = true;
+            // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(181, 72);
+            this.ClientSize = new System.Drawing.Size(169, 120);
+            this.Controls.Add(this.checkTrails);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.check_enableLogging);
@@ -90,6 +102,7 @@
         private System.Windows.Forms.CheckBox check_enableLogging;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.CheckBox checkTrails;
 
 
     }
