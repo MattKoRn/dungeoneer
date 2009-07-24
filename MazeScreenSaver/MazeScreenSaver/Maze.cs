@@ -273,24 +273,19 @@ namespace MazeScreenSaver
             return FOVTiles;
         }
 
-        public List<Point> GetAdjacentFloors(Point source)
+        public Dictionary<Direction,Point> GetAdjacentFloors(Point source)
         {
-            List<Point> retval = new List<Point>();
+            Dictionary<Direction, Point> retval = new Dictionary<Direction, Point>();
             int floortype = this[source];
-            for (int dr = -1; dr <= 1; dr++)
+            foreach (Direction dir in Direction.Directions)
             {
-                for (int dc = -1; dc <= 1; dc++)
-                {
-                    if (dr == 0 && dc == 0)
-                        continue;
-
-                    int r = source.X + dr;
-                    int c = source.Y + dc;
-                    this.FixCoords(ref r, ref c);
-                    if (m_maze[r, c] == floortype)
-                        retval.Add(new Point(r, c));
-                }
+                int r = source.X + dir.delta.X;
+                int c = source.Y + dir.delta.Y;
+                this.FixCoords(ref r, ref c);
+                if (m_maze[r, c] == floortype)
+                    retval[dir] = new Point(r, c);
             }
+
             return retval;
         }
 

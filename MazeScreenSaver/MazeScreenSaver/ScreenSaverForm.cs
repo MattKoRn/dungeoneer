@@ -21,6 +21,7 @@ namespace MazeScreenSaver
         private Tile m_WallTile, m_FloorTile;
         private Tile m_StairsTile;
         private Tile m_PlayerTile;
+        private Tile m_PlayerTrailTile;
         private Timer m_RegenTimer;
         private Timer m_MoveTimer;
         private int MAX_FLOORS = 30;
@@ -28,13 +29,15 @@ namespace MazeScreenSaver
         private Point stairsCoords;
         private Player p;
         private bool newMaze = true;
+        private string registryKey = "HKEY_CURRENT_USER\\Software\\Dungeoneer";
         private bool can_log;
+        private bool show_trails;
         private Logger Log;
 
         public ScreenSaverForm()
         {
             InitializeComponent();
-            getRegistryLogSetting();
+            getSettings();
             Log = new Logger();
             Log.enableLogging(can_log);
             //Log.m_LogOn = false;
@@ -63,13 +66,19 @@ namespace MazeScreenSaver
             m_MousePosition = Cursor.Position;
         }
 
-        private void getRegistryLogSetting()
+        private bool getRegistrySetting(string valueName)
         {
-            string keyPath = "HKEY_CURRENT_USER\\Software\\Dungeoneer";
-            if (Microsoft.Win32.Registry.GetValue(keyPath, "enableLogging", null) != null)
-            {
-                can_log = ((int)Microsoft.Win32.Registry.GetValue(keyPath, "enableLogging", null) == 1);
-            }
+            object value = Microsoft.Win32.Registry.GetValue(registryKey, valueName, null);
+            if(value != null)
+                return ((int)value == 1);
+            else
+                return false;
+        }
+
+        private void getSettings()
+        {
+            can_log = getRegistrySetting("enableLogging");
+            show_trails = getRegistrySetting("enableTrails");
         }
 
         private void ScreenSaverForm_Load(object sender, EventArgs e)
@@ -87,6 +96,9 @@ namespace MazeScreenSaver
                 Bitmap playerBMP = Resources.player;
                 playerBMP.MakeTransparent(Color.Black);
                 m_PlayerTile = new Tile(playerBMP, 0, 0);
+                Bitmap playerTrailBMP = Resources.playerTrail;
+                playerTrailBMP.MakeTransparent(Color.Black);
+                m_PlayerTrailTile = new Tile(playerTrailBMP, 0, 0);
 
                 m_FloorTiles = new Tile[MAX_FLOORS+1];
 
@@ -149,10 +161,9 @@ namespace MazeScreenSaver
                         }
                     }
                     m_StairsTile.Draw(e.Graphics, stairsCoords.X * 32 + m_OffsetX, stairsCoords.Y * 32 + m_OffsetY);
-                    if (p.has_moved)
+                    foreach(Point point in p.getVisitedCoords())
                     {
-                        tile = m_Maze[p.previousCoord];
-                        m_FloorTiles[tile].Draw(e.Graphics, p.previousCoord.X * 32 + m_OffsetX, p.previousCoord.Y * 32 + m_OffsetY);
+                        m_PlayerTrailTile.Draw(e.Graphics, point.X* 32 + m_OffsetX, point.Y * 32 + m_OffsetY);
                     }
                     m_PlayerTile.Draw(e.Graphics, p.coord.X * 32 + m_OffsetX, p.coord.Y * 32 + m_OffsetY);
 
@@ -200,10 +211,10 @@ namespace MazeScreenSaver
                 int tries;
                 tries = 0;
                 bool giveup = false;
+                Point startingCoord;
                 do
                 {
-                    Point point = m_Maze.RandomSquare();
-                    p.coord = point;
+                    startingCoord = m_Maze.RandomSquare();
                     tries += 1;
                     if (tries > 1000)
                     {
@@ -216,9 +227,10 @@ namespace MazeScreenSaver
                         Log.Write("Anyway, I'm giving up now.", 2);
                         giveup = true;
                     }
-                } while (p.coord.X == stairsCoords.X && p.coord.Y == stairsCoords.Y && !giveup);
+                } while (startingCoord.X == stairsCoords.X && startingCoord.Y == stairsCoords.Y && !giveup);
                 if (!giveup)
                 {
+                    p.setStartingCoord(startingCoord);
                     p.stairsCoord = stairsCoords;
                     newMaze = false;
 
