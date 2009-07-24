@@ -9,8 +9,8 @@ namespace MazeScreenSaver
     class Player
     {
         public Point coord;
-        private List<Point> availableMoves;
-        private List<Point> preferredMoves;
+        private Dictionary<Direction,Point> availableMoves;
+        private Dictionary<Direction,Point> preferredMoves;
         public Point previousCoord;
         private List<Point> visitedCoords;
         private Point oldestBacktrack;
@@ -30,15 +30,22 @@ namespace MazeScreenSaver
             rotationDirection = rand.Next(1, 3); // 1 or 2, 1 = clockwise, 2 = counterclockwise
         }
 
-        public void setAvailableMoves(List<Point> moves)
+        public void setStartingCoord(Point coord)
+        {
+            this.coord = coord;
+            visitedCoords.Add(coord);
+        }
+
+        public void setAvailableMoves(Dictionary<Direction,Point> moves)
         {
             availableMoves = moves;
-            preferredMoves = new List<Point>();
+            preferredMoves = new Dictionary<Direction, Point>();
             oldestBacktrack = new Point(0,0);
-            foreach (Point p in moves)
+            foreach (KeyValuePair<Direction, Point> kvp in moves)
             {
+                Point p = kvp.Value;
                 if (!visitedCoords.Contains(p))
-                    preferredMoves.Add(p);
+                    preferredMoves[kvp.Key] = p;
                 else
                 {
                     if (oldestBacktrack == new Point(0,0))
@@ -62,6 +69,7 @@ namespace MazeScreenSaver
 
         public void move()
         {
+            Point moveTo;
             previousCoord = coord;
             List<List<Point>> goodMoves = new List<List<Point>>();
             goodMoves.Add(new List<Point>(1));
@@ -69,14 +77,14 @@ namespace MazeScreenSaver
             goodMoves.Add(new List<Point>(2));
             goodMoves.Add(new List<Point>(2));
             goodMoves.Add(new List<Point>(1));
-            if (preferredMoves.Contains(stairsCoord))
+            if (preferredMoves.ContainsValue(stairsCoord))
             {
-                coord = stairsCoord;
+                moveTo = stairsCoord;
                 is_backtracking = false;
             }
             else if (preferredMoves.Count() == 0)
             {
-                coord = oldestBacktrack;
+                moveTo = oldestBacktrack;
                 facing = Direction.getDirection(coord, previousCoord);
                 is_backtracking = true;
             }
@@ -84,42 +92,39 @@ namespace MazeScreenSaver
             {
                 if (facing == Direction.None)
                 {
-                    Point move = preferredMoves[rand.Next(preferredMoves.Count)];
+                    Point move = preferredMoves[preferredMoves.Keys.ElementAt(rand.Next(preferredMoves.Count))];
                     coord = move;
                     facing = Direction.getDirection(previousCoord, coord);
                     is_backtracking = false;
                 }
 
                 // Keep moving in the same direction if you can
-                foreach (Point move in preferredMoves)
+                foreach (KeyValuePair<Direction, Point> move in preferredMoves)
                 {
-                    if (Direction.getDirection(coord, move).delta == facing.delta)
+                    if (move.Key == facing)
                     {
                         List<Point> sameDir = new List<Point>();
-                        goodMoves[0].Add(move);
+                        goodMoves[0].Add(move.Value);
                     }
-                    else if (Direction.getDirection(coord, move).delta == facing.adjacent[0].delta ||
-                        Direction.getDirection(coord, move).delta == facing.adjacent[1].delta)
+                    else if (move.Key == facing.adjacent[0] || move.Key == facing.adjacent[1])
                     {
-                        goodMoves[1].Add(move);
+                        goodMoves[1].Add(move.Value);
                     }
-                    else if (Direction.getDirection(coord, move).delta == facing.adjacent[0].adjacent[0].delta ||
-                        Direction.getDirection(coord, move).delta == facing.adjacent[1].adjacent[1].delta)
+                    else if (move.Key == facing.adjacent[0].adjacent[0] || move.Key == facing.adjacent[1].adjacent[1])
                     {
-                        goodMoves[2].Add(move);
+                        goodMoves[2].Add(move.Value);
                     }
-                    else if (Direction.getDirection(coord, move).delta == facing.adjacent[0].adjacent[0].adjacent[0].delta ||
-                        Direction.getDirection(coord, move).delta == facing.adjacent[1].adjacent[1].adjacent[1].delta)
+                    else if (move.Key == facing.adjacent[0].adjacent[0].adjacent[0] || move.Key == facing.adjacent[1].adjacent[1].adjacent[1])
                     {
-                        goodMoves[3].Add(move);
+                        goodMoves[3].Add(move.Value);
                     }
-                    else if (Direction.getDirection(coord, move).delta == facing.adjacent[0].adjacent[0].adjacent[0].adjacent[0].delta) // should be the same as 4x[1]
+                    else if (move.Key == facing.adjacent[0].adjacent[0].adjacent[0].adjacent[0]) // should be the same as 4x[1]
                     {
-                        goodMoves[4].Add(move);
+                        goodMoves[4].Add(move.Value);
                     }
                 }
 
-                Point moveTo = preferredMoves[rand.Next(preferredMoves.Count)];
+                moveTo = preferredMoves[preferredMoves.Keys.ElementAt(rand.Next(preferredMoves.Count))];
                 foreach (List<Point> movelist in goodMoves)
                 {
                     if (movelist.Count == 0)
@@ -135,12 +140,20 @@ namespace MazeScreenSaver
                         break;
                     }
                 }
-                coord = moveTo;
-                visitedCoords.Add(coord);
-                facing = Direction.getDirection(previousCoord, coord);
                 is_backtracking = false;
             }
+            coord = moveTo;
+            visitedCoords.Add(coord);
+            if(!is_backtracking)
+                facing = Direction.getDirection(previousCoord, coord);
+            else
+                facing = Direction.getDirection(coord, previousCoord);
             has_moved = true;
+        }
+
+        public List<Point> getVisitedCoords()
+        {
+            return visitedCoords;
         }
     }
 }
