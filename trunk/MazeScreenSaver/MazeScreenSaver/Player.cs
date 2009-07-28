@@ -6,14 +6,32 @@ using System.Drawing;
 
 namespace MazeScreenSaver
 {
+    class Move
+    {
+        public Point destination;
+        public Direction direction;
+
+        public Move()
+        {
+            destination = new Point(-1, -1);
+            direction = Direction.None;
+        }
+
+        public Move(Point dest, Direction dir)
+        {
+            destination = dest;
+            direction = dir;
+        }
+    }
+
     class Player
     {
         public Point coord;
-        private Dictionary<Direction,Point> availableMoves;
-        private Dictionary<Direction,Point> preferredMoves;
+        private List<Move> availableMoves;
+        private List<Move> preferredMoves;
         public Point previousCoord;
         private List<Point> visitedCoords;
-        private Point oldestBacktrack;
+        private Move oldestBacktrack;
         private bool is_backtracking;
         public bool has_moved = false;
         public Point stairsCoord;
@@ -38,27 +56,27 @@ namespace MazeScreenSaver
 
         public void setAvailableMoves(Dictionary<Direction,Point> moves)
         {
-            availableMoves = moves;
-            preferredMoves = new Dictionary<Direction, Point>();
-            oldestBacktrack = new Point(0,0);
+            availableMoves = new List<Move>();
+            preferredMoves = new List<Move>();
+            oldestBacktrack = new Move();
             foreach (KeyValuePair<Direction, Point> kvp in moves)
             {
-                Point p = kvp.Value;
-                if (!visitedCoords.Contains(p))
-                    preferredMoves[kvp.Key] = p;
+                Move m = new Move(kvp.Value, kvp.Key);
+                if (!visitedCoords.Contains(m.destination))
+                    preferredMoves.Add(m);
                 else
                 {
-                    if (oldestBacktrack == new Point(0,0))
-                        oldestBacktrack = p;
+                    if (oldestBacktrack.destination == new Point(-1, -1))
+                        oldestBacktrack = m;
                     else
                     {
-                        if (visitedCoords.IndexOf(p) < visitedCoords.IndexOf(oldestBacktrack))
-                            oldestBacktrack = p;
+                        if (visitedCoords.IndexOf(m.destination) < visitedCoords.IndexOf(oldestBacktrack.destination))
+                            oldestBacktrack = m;
                     }
                 }
             }
 
-            if (preferredMoves.Count == 0 && oldestBacktrack == visitedCoords[1] && coord == visitedCoords[0])
+            if (preferredMoves.Count == 0 && oldestBacktrack.destination == visitedCoords[1] && coord == visitedCoords[0])
             {
                 // Reset the list to keep us from getting in a loop. By this point actually we would have to give up but we're moving randomly so it can happen.
                 visitedCoords = new List<Point>();
@@ -69,63 +87,61 @@ namespace MazeScreenSaver
 
         public void move()
         {
-            Point moveTo;
+            Move moveTo = new Move();
             previousCoord = coord;
-            List<List<Point>> goodMoves = new List<List<Point>>();
-            goodMoves.Add(new List<Point>(1));
-            goodMoves.Add(new List<Point>(2));
-            goodMoves.Add(new List<Point>(2));
-            goodMoves.Add(new List<Point>(2));
-            goodMoves.Add(new List<Point>(1));
-            if (preferredMoves.ContainsValue(stairsCoord))
+            List<List<Move>> goodMoves = new List<List<Move>>();
+            goodMoves.Add(new List<Move>(1));
+            goodMoves.Add(new List<Move>(2));
+            goodMoves.Add(new List<Move>(2));
+            goodMoves.Add(new List<Move>(2));
+            goodMoves.Add(new List<Move>(1));
+            foreach (Move m in preferredMoves)
             {
-                moveTo = stairsCoord;
-                is_backtracking = false;
+                if (m.destination == stairsCoord)
+                    moveTo = m;
             }
-            else if (preferredMoves.Count() == 0)
+            if (moveTo.destination == new Point(-1, -1) && preferredMoves.Count() == 0)
             {
                 moveTo = oldestBacktrack;
                 facing = Direction.getDirection(coord, previousCoord);
                 is_backtracking = true;
             }
-            else
+
+            if (moveTo.destination == new Point(-1, -1) && facing == Direction.None)
             {
-                if (facing == Direction.None)
-                {
-                    Point move = preferredMoves[preferredMoves.Keys.ElementAt(rand.Next(preferredMoves.Count))];
-                    coord = move;
-                    facing = Direction.getDirection(previousCoord, coord);
-                    is_backtracking = false;
-                }
+                moveTo = preferredMoves[rand.Next(preferredMoves.Count)];
+                is_backtracking = false;
+            }
 
+            if(moveTo.destination == new Point(-1, -1))
+            {
                 // Keep moving in the same direction if you can
-                foreach (KeyValuePair<Direction, Point> move in preferredMoves)
+                foreach (Move move in preferredMoves)
                 {
-                    if (move.Key == facing)
+                    if (move.direction == facing)
                     {
-                        List<Point> sameDir = new List<Point>();
-                        goodMoves[0].Add(move.Value);
+                        goodMoves[0].Add(move);
                     }
-                    else if (move.Key == facing.adjacent[0] || move.Key == facing.adjacent[1])
+                    else if (move.direction == facing.adjacent[0] || move.direction == facing.adjacent[1])
                     {
-                        goodMoves[1].Add(move.Value);
+                        goodMoves[1].Add(move);
                     }
-                    else if (move.Key == facing.adjacent[0].adjacent[0] || move.Key == facing.adjacent[1].adjacent[1])
+                    else if (move.direction == facing.adjacent[0].adjacent[0] || move.direction == facing.adjacent[1].adjacent[1])
                     {
-                        goodMoves[2].Add(move.Value);
+                        goodMoves[2].Add(move);
                     }
-                    else if (move.Key == facing.adjacent[0].adjacent[0].adjacent[0] || move.Key == facing.adjacent[1].adjacent[1].adjacent[1])
+                    else if (move.direction == facing.adjacent[0].adjacent[0].adjacent[0] || move.direction == facing.adjacent[1].adjacent[1].adjacent[1])
                     {
-                        goodMoves[3].Add(move.Value);
+                        goodMoves[3].Add(move);
                     }
-                    else if (move.Key == facing.adjacent[0].adjacent[0].adjacent[0].adjacent[0]) // should be the same as 4x[1]
+                    else if (move.direction == facing.adjacent[0].adjacent[0].adjacent[0].adjacent[0]) // should be the same as 4x[1]
                     {
-                        goodMoves[4].Add(move.Value);
+                        goodMoves[4].Add(move);
                     }
                 }
 
-                moveTo = preferredMoves[preferredMoves.Keys.ElementAt(rand.Next(preferredMoves.Count))];
-                foreach (List<Point> movelist in goodMoves)
+                moveTo = preferredMoves[rand.Next(preferredMoves.Count)];
+                foreach (List<Move> movelist in goodMoves)
                 {
                     if (movelist.Count == 0)
                         continue;
@@ -142,12 +158,12 @@ namespace MazeScreenSaver
                 }
                 is_backtracking = false;
             }
-            coord = moveTo;
+            coord = moveTo.destination;
             visitedCoords.Add(coord);
-            if(!is_backtracking)
-                facing = Direction.getDirection(previousCoord, coord);
+            if (!is_backtracking)
+                facing = moveTo.direction;
             else
-                facing = Direction.getDirection(coord, previousCoord);
+                facing = moveTo.direction.adjacent[0].adjacent[0].adjacent[0].adjacent[0];
             has_moved = true;
         }
 
