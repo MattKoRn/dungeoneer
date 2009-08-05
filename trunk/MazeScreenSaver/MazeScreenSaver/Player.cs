@@ -80,6 +80,7 @@ namespace MazeScreenSaver
             {
                 // Reset the list to keep us from getting in a loop. By this point actually we would have to give up but we're moving randomly so it can happen.
                 visitedCoords = new List<Point>();
+                facing = Direction.None;
                 visitedCoords.Add(coord);
                 setAvailableMoves(moves); // Try again
             }
