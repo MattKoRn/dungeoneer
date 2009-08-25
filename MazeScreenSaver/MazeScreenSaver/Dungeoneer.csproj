@@ -122,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\dg_dungeon32.gif" />
+    <None Include="Resources\player11.png" />
     <None Include="Resources\player1.png" />
     <None Include="Resources\player.png" />
     <None Include="Resources\stairs.png" />

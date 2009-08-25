@@ -107,6 +107,7 @@ namespace MazeScreenSaver
         List<int> floorTypeCount;
         public List<List<Point>> floorTypeMembers;
         Random rand;
+        public Logger log;
 
         public Maze(int rows, int cols)
         {
@@ -115,6 +116,23 @@ namespace MazeScreenSaver
             rand = new Random();
 
             m_maze = new int[rows, cols];
+        }
+
+        public void log_maze()
+        {
+            string logstring;
+            for (int r = 0; r < m_rows; r++)
+            {
+                logstring = "";
+                for (int c = 0; c < m_cols; c++)
+                {
+                    if (m_maze[r, c] == -1)
+                        logstring += "*";
+                    else
+                        logstring += m_maze[r, c].ToString();
+                }
+                log.Write(logstring);
+            }
         }
 
         public int this[int row, int col]

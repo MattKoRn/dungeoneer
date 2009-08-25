@@ -21,7 +21,8 @@ namespace MazeScreenSaver
         private Tile m_WallTile, m_FloorTile;
         private Tile m_StairsTile;
         private Tile m_PlayerTile;
-        private Tile m_PlayerTrailTile;
+        private Tile m_PlayerVisitedTrailTile;
+        private Tile m_PlayerExlporedTrailTile;
         private Timer m_RegenTimer;
         private Timer m_MoveTimer;
         private int MAX_FLOORS = 30;
@@ -33,6 +34,8 @@ namespace MazeScreenSaver
         private bool can_log;
         private bool show_trails;
         private Logger Log;
+        private int moves;
+        private Font movesFont;
 
         public ScreenSaverForm()
         {
@@ -64,6 +67,7 @@ namespace MazeScreenSaver
             DoubleBuffered = true;
             BackgroundImageLayout = ImageLayout.Stretch;
             m_MousePosition = Cursor.Position;
+            movesFont = new Font("Courier", 7);
         }
 
         private bool getRegistrySetting(string valueName)
@@ -96,9 +100,12 @@ namespace MazeScreenSaver
                 Bitmap playerBMP = Resources.player;
                 playerBMP.MakeTransparent(Color.Black);
                 m_PlayerTile = new Tile(playerBMP, 0, 0);
-                Bitmap playerTrailBMP = Resources.playerTrail;
+                Bitmap playerTrailBMP = Resources.playerVisitedTrail;
                 playerTrailBMP.MakeTransparent(Color.Black);
-                m_PlayerTrailTile = new Tile(playerTrailBMP, 0, 0);
+                m_PlayerVisitedTrailTile = new Tile(playerTrailBMP, 0, 0);
+                Bitmap playerExploredTrailBMP = Resources.playerExploreTrail;
+                playerExploredTrailBMP.MakeTransparent(Color.Black);
+                m_PlayerExlporedTrailTile = new Tile(playerExploredTrailBMP, 0, 0);
 
                 m_FloorTiles = new Tile[MAX_FLOORS+1];
 
@@ -145,9 +152,9 @@ namespace MazeScreenSaver
                 if (m_Maze != null)
                 {
                     Stopwatch timer = Stopwatch.StartNew();
-                    for (int r = 0; r < m_TilesWide; r++)
+                    for (int r = 0; r < m_TilesHigh; r++)
                     {
-                        for (int c = 0; c < m_TilesHigh; c++)
+                        for (int c = 0; c < m_TilesWide; c++)
                         {
                             if (m_Maze[r, c] == -1)
                                 m_WallTile.Draw(e.Graphics, r * 32 + m_OffsetX, c * 32 + m_OffsetY);
@@ -165,10 +172,16 @@ namespace MazeScreenSaver
                     {
                         foreach (Point point in p.getVisitedCoords())
                         {
-                            m_PlayerTrailTile.Draw(e.Graphics, point.X * 32 + m_OffsetX, point.Y * 32 + m_OffsetY);
+                            m_PlayerVisitedTrailTile.Draw(e.Graphics, point.X * 32 + m_OffsetX, point.Y * 32 + m_OffsetY);
+                        }
+                        foreach (Point point in p.getExploredCoords())
+                        {
+                            m_PlayerExlporedTrailTile.Draw(e.Graphics, point.X * 32 + m_OffsetX, point.Y * 32 + m_OffsetY);
                         }
                     }
                     m_PlayerTile.Draw(e.Graphics, p.coord.X * 32 + m_OffsetX, p.coord.Y * 32 + m_OffsetY);
+                    moves += 1;
+                    e.Graphics.DrawString(moves.ToString(), movesFont, Brushes.White, new Point(stairsCoords.Y * 32 + m_OffsetY, stairsCoords.X * 32 + m_OffsetX));
 
                     timer.Stop();
                     //Log.Write("Redrawing maze took " + timer.ElapsedTicks.ToString() + " ticks.");
@@ -177,9 +190,6 @@ namespace MazeScreenSaver
                 {
                     this.Invalidate();
                     m_RegenTimer = new Timer();
-                    m_RegenTimer.Tick += new EventHandler(m_RegenTimer_Tick);
-                    m_RegenTimer.Interval = 1000 * 15;
-                    m_RegenTimer.Start();
 
                     m_MoveTimer = new Timer();
                     m_MoveTimer.Tick += new EventHandler(m_MoveTimer_Tick);
@@ -192,6 +202,7 @@ namespace MazeScreenSaver
                     bool mazeGenComplete = false;
                     while(!mazeGenComplete)
                         mazeGenComplete = RegenMaze();
+                    moves = 0;
                 }
             }
             catch (Exception error)
@@ -206,11 +217,13 @@ namespace MazeScreenSaver
             try
             {
                 Log.Write("New maze");
-                m_Maze = new Maze(m_TilesWide, m_TilesHigh);
+                m_Maze = new Maze(m_TilesHigh, m_TilesWide);
+                m_Maze.log = Log;
                 m_Maze.generate();
                 m_Maze.fixFloorType();
                 stairsCoords = m_Maze.RandomSquare();
                 p = new Player();
+                p.log = Log;
                 int tries;
                 tries = 0;
                 bool giveup = false;
@@ -267,7 +280,7 @@ namespace MazeScreenSaver
         void m_RegenTimer_Tick(object sender, EventArgs e)
         {
             //Log.Write("RegenTimer Tick");
-            newMaze = true;
+            //newMaze = true;
             this.Invalidate();
         }
 

@@ -291,9 +291,16 @@ namespace MazeScreenSaver.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap playerTrail {
+        internal static System.Drawing.Bitmap playerExploreTrail {
             get {
-                object obj = ResourceManager.GetObject("playerTrail", resourceCulture);
+                object obj = ResourceManager.GetObject("playerExploreTrail", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap playerVisitedTrail {
+            get {
+                object obj = ResourceManager.GetObject("playerVisitedTrail", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
