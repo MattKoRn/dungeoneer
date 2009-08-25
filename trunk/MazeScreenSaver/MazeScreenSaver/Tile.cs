@@ -25,7 +25,7 @@ namespace MazeScreenSaver
 
         public void Draw(Graphics g, int x, int y)
         {
-            g.DrawImage(m_bmp, x, y, new Rectangle(m_TileX * m_TileWidth, m_TileY * m_TileHeight,m_TileWidth, m_TileHeight),GraphicsUnit.Pixel);
+            g.DrawImage(m_bmp, y, x, new Rectangle(m_TileX * m_TileWidth, m_TileY * m_TileHeight,m_TileWidth, m_TileHeight),GraphicsUnit.Pixel);
         }
     }
 }
