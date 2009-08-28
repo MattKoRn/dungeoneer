@@ -41,7 +41,7 @@ namespace MazeScreenSaver
             return destination == new Point(-999, -999);
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return destination.ToString() + direction.name;
         }
@@ -57,7 +57,6 @@ namespace MazeScreenSaver
         private List<Point> explorableCoords;
         private List<Point> visitedCoords;
         private List<Point> coordHistory;
-        private Move newestBacktrack;
         private bool is_backtracking;
         public bool has_moved = false;
         public Point stairsCoord;
@@ -65,6 +64,9 @@ namespace MazeScreenSaver
         private Direction facing;
         private int rotationDirection;
         public Logger log;
+        private Direction goalDirection;
+        private int[,] knownMaze;
+        private int mazeRows, mazeCols;
 
         public Player()
         {
@@ -75,12 +77,63 @@ namespace MazeScreenSaver
             rand = new Random();
             facing = Direction.None;
             rotationDirection = rand.Next(1, 3); // 1 or 2, 1 = clockwise, 2 = counterclockwise
+            mazeRows = mazeCols = 1;
+            knownMaze = new int[1, 1];
+        }
+
+        public void setMazeSize(int rows, int cols)
+        {
+            knownMaze = new int[rows, cols];
+            mazeRows = rows;
+            mazeCols = cols;
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    knownMaze[r, c] = -1;
+                }
+            }
+        }
+
+        private void resetGoalDirection()
+        {
+            int deltaR, deltaC;
+            deltaR = stairsCoord.X - coord.X;
+            deltaC = stairsCoord.Y - coord.Y;
+
+            if (deltaC != 0 && deltaR != 0)
+            {
+                double slope = Math.Abs((double)deltaR / deltaC);
+                if (slope > 0.666 && slope < 1.5)
+                {
+                    deltaR = deltaR / Math.Abs(deltaR);
+                    deltaC = deltaC / Math.Abs(deltaC);
+                }
+                else if (slope >= 1.5)
+                {
+                    deltaC = 0;
+                    deltaR = deltaR / Math.Abs(deltaR);
+                }
+                else // if(slope <= 0.666)
+                {
+                    deltaR = 0;
+                    deltaC = deltaC / Math.Abs(deltaC);
+                }
+            }
+            else if (deltaC == 0 && deltaR != 0)
+                deltaR = deltaR / Math.Abs(deltaR);
+            else if (deltaR == 0 && deltaC != 0)
+                deltaC = deltaC / Math.Abs(deltaC);
+
+            goalDirection = Direction.getDirection(new Point(deltaR, deltaC));
         }
 
         public void setStartingCoord(Point coord)
         {
             this.coord = coord;
             coordHistory.Add(coord);
+            resetGoalDirection();
+            knownMaze[coord.X, coord.Y] = 1;
         }
 
         public void setAvailableMoves(Dictionary<Direction,Point> moves)
@@ -88,6 +141,26 @@ namespace MazeScreenSaver
             visitedMoves = new List<Move>();
             explorableMoves = new List<Move>();
             newMoves = new List<Move>();
+
+            int r, c;
+
+            for (int deltaR = -1; deltaR <= 1; deltaR++)
+            {
+                for (int deltaC = -1; deltaC <= 1; deltaC++)
+                {
+                    r = deltaR + coord.X;
+                    c = deltaC + coord.Y;
+                    if (r >= 0 && r < mazeRows && c >= 0 && c < mazeCols)
+                    {
+                        Point p = new Point(r, c);
+                        if (moves.Values.Contains(p))
+                            knownMaze[r, c] = 1;
+                        else
+                            knownMaze[r, c] = 0;
+                    }
+                }
+            }
+
             int currentBacktrackIndex = coordHistory.Count;
             if (is_backtracking)
                 currentBacktrackIndex = coordHistory.IndexOf(coord);
@@ -116,7 +189,7 @@ namespace MazeScreenSaver
                 coordHistory = new List<Point>();
                 visitedCoords = new List<Point>();
                 explorableCoords = new List<Point>();
-                facing = Direction.None;
+                resetGoalDirection();
                 setAvailableMoves(moves);
             }
         }
@@ -144,9 +217,9 @@ namespace MazeScreenSaver
                     }
                     else
                     {
-                        if (facing.AngleDifference(m.direction) < facing.AngleDifference(newMove.direction))
+                        if (goalDirection.AngleDifference(m.direction) < goalDirection.AngleDifference(newMove.direction))
                             newMove = m;
-                        else if (facing.AngleDifference(m.direction) == facing.AngleDifference(newMove.direction) && rand.Next(2) == 0)
+                        else if (goalDirection.AngleDifference(m.direction) == goalDirection.AngleDifference(newMove.direction) && rand.Next(2) == 0)
                             newMove = m;
                     }
                 }
@@ -158,9 +231,9 @@ namespace MazeScreenSaver
                     exploreMove = e;
                 else
                 {
-                    if (facing.AngleDifference(e.direction) < facing.AngleDifference(exploreMove.direction))
+                    if (goalDirection.AngleDifference(e.direction) < goalDirection.AngleDifference(exploreMove.direction))
                         exploreMove = e;
-                    else if (facing.AngleDifference(e.direction) == facing.AngleDifference(exploreMove.direction) && rand.Next(2) == 0)
+                    else if (goalDirection.AngleDifference(e.direction) == goalDirection.AngleDifference(exploreMove.direction) && rand.Next(2) == 0)
                         exploreMove = e;
                 }
             }
@@ -207,7 +280,7 @@ namespace MazeScreenSaver
             coord = moveTo.destination;
             if (!is_backtracking)
             {
-                facing = moveTo.direction;
+                resetGoalDirection();
                 coordHistory.Add(moveTo.destination);
             }
 
@@ -239,5 +312,13 @@ namespace MazeScreenSaver
             return explorableCoords;
         }
 
+        public int getKnownMaze(int r, int c)
+        {
+            if (r < 0 || r >= mazeRows)
+                throw new ArgumentOutOfRangeException("r", "R out of range: valid values are 0-" + mazeRows.ToString());
+            if (c < 0 || c >= mazeCols)
+                throw new ArgumentOutOfRangeException("c", "C out of range: valid values are 0-" + mazeCols.ToString());
+            return knownMaze[r, c];
+        }
     }
 }

@@ -111,6 +111,12 @@ namespace MazeScreenSaver
 
         public Maze(int rows, int cols)
         {
+            if (rows < 4)
+                throw new ArgumentException("Maze Rows must be at least 4");
+
+            if (cols < 4)
+                throw new ArgumentException("Maze Cols must be at least 4");
+
             m_rows = rows;
             m_cols = cols;
             rand = new Random();
@@ -138,9 +144,7 @@ namespace MazeScreenSaver
         public int this[int row, int col]
         {
             get
-            {
-                FixCoords(ref row, ref col);
-                
+            {                
                 if(row >= m_rows
                     || row < 0)
                     throw new ArgumentOutOfRangeException("row");
@@ -169,7 +173,9 @@ namespace MazeScreenSaver
             {
                 for (int c = 0; c < m_cols; c++)
                 {
-                    if (rand.Next(2) == 0)
+                    if (r == 0 || r == m_rows - 1 || c == 0 || c == m_cols - 1)
+                        m_maze[r, c] = 0;
+                    else if (rand.Next(2) == 0)
                         m_maze[r, c] = -1;
                     else
                         m_maze[r, c] = 0;
@@ -299,9 +305,9 @@ namespace MazeScreenSaver
             {
                 int r = source.X + dir.delta.X;
                 int c = source.Y + dir.delta.Y;
-                this.FixCoords(ref r, ref c);
-                if (m_maze[r, c] == floortype)
-                    retval[dir] = new Point(r, c);
+                if(r >= 0 && r < m_rows && c >= 0 && c < m_cols)
+                    if (m_maze[r, c] == floortype)
+                        retval[dir] = new Point(r, c);
             }
 
             return retval;
