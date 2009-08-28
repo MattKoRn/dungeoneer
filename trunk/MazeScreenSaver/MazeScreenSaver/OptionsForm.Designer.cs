@@ -32,6 +32,9 @@
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.checkTrails = new System.Windows.Forms.CheckBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtSpeed = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // check_enableLogging
@@ -47,7 +50,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(5, 85);
+            this.btnOK.Location = new System.Drawing.Point(12, 110);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 1;
@@ -58,7 +61,7 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(87, 85);
+            this.btnCancel.Location = new System.Drawing.Point(94, 110);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 2;
@@ -76,12 +79,40 @@
             this.checkTrails.Text = "Show Visited Trails";
             this.checkTrails.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(9, 65);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(94, 13);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Movement Speed:";
+            // 
+            // txtSpeed
+            // 
+            this.txtSpeed.Location = new System.Drawing.Point(12, 81);
+            this.txtSpeed.Name = "txtSpeed";
+            this.txtSpeed.Size = new System.Drawing.Size(39, 20);
+            this.txtSpeed.TabIndex = 5;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(57, 84);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(87, 13);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "x 50ms per move";
+            // 
             // OptionsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(169, 120);
+            this.ClientSize = new System.Drawing.Size(182, 145);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.txtSpeed);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.checkTrails);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
@@ -103,6 +134,9 @@
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.CheckBox checkTrails;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox txtSpeed;
+        private System.Windows.Forms.Label label2;
 
 
     }
