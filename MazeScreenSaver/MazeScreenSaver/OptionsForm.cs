@@ -36,16 +36,12 @@ namespace MazeScreenSaver
 
         private void OptionsForm_Load(object sender, EventArgs e)
         {
-            if (Microsoft.Win32.Registry.GetValue(registryKey, "enableLogging", null) != null)
-                if ((int)Microsoft.Win32.Registry.GetValue(registryKey, "enableLogging", null) == 1)
-                    check_enableLogging.Checked = true;
-                else
-                    check_enableLogging.Checked = false;
-            else
-                check_enableLogging.Checked = false;
-
             setCheckboxFromRegistry(check_enableLogging, "enableLogging");
             setCheckboxFromRegistry(checkTrails, "enableTrails");
+            int? speed = getRegistryIntValue("speed");
+            if (!speed.HasValue)
+                speed = 5;
+            txtSpeed.Text = speed.ToString();
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -64,10 +60,27 @@ namespace MazeScreenSaver
             Microsoft.Win32.Registry.SetValue(registryKey, valueName, value);
         }
 
+        private void setRegistryIntValue(int value, string valueName)
+        {
+            Microsoft.Win32.Registry.SetValue(registryKey, valueName, value);
+        }
+
+        private int? getRegistryIntValue(string valueName)
+        {
+            return (int?)Microsoft.Win32.Registry.GetValue(registryKey, valueName, null);
+        }
+
         private void btnOK_Click(object sender, EventArgs e)
         {
+            if (txtSpeed.Text.Trim() == "" || Convert.ToInt32(txtSpeed.Text) < 0)
+            {
+                MessageBox.Show("Please enter a positive integer for the speed.");
+                return;
+            }
+            int speed = Convert.ToInt32(txtSpeed.Text);
             setRegistryValueFromCheckbox(check_enableLogging, "enableLogging");
             setRegistryValueFromCheckbox(checkTrails, "enableTrails");
+            setRegistryIntValue(speed, "speed");
             Close();
         }
 
@@ -75,5 +88,6 @@ namespace MazeScreenSaver
         {
             Close();
         }
+
     }
 }

@@ -36,6 +36,8 @@ namespace MazeScreenSaver
         private Logger Log;
         private int moves;
         private Font movesFont;
+        private int moveInterval;
+        private int nextMoveInterval;
 
         public ScreenSaverForm()
         {
@@ -68,6 +70,7 @@ namespace MazeScreenSaver
             BackgroundImageLayout = ImageLayout.Stretch;
             m_MousePosition = Cursor.Position;
             movesFont = new Font("Courier", 7);
+            nextMoveInterval = moveInterval;
         }
 
         private bool getRegistrySetting(string valueName)
@@ -79,10 +82,21 @@ namespace MazeScreenSaver
                 return false;
         }
 
+        private int? getRegistryIntSetting(string valueName)
+        {
+            int? value = (int?)Microsoft.Win32.Registry.GetValue(registryKey, valueName, null);
+            return value;
+        }
+
         private void getSettings()
         {
             can_log = getRegistrySetting("enableLogging");
             show_trails = getRegistrySetting("enableTrails");
+            int? interval = getRegistryIntSetting("speed");
+            if (!interval.HasValue)
+                moveInterval = 250;
+            else
+                moveInterval = (int)interval * 50;
         }
 
         private void ScreenSaverForm_Load(object sender, EventArgs e)
@@ -189,6 +203,8 @@ namespace MazeScreenSaver
 
                     timer.Stop();
                     //Log.Write("Redrawing maze took " + timer.ElapsedTicks.ToString() + " ticks.");
+                    if (playerOnStairs)
+                        m_MoveTimer.Interval = moveInterval * 2;
                 }
                 else
                 {
@@ -197,7 +213,7 @@ namespace MazeScreenSaver
 
                     m_MoveTimer = new Timer();
                     m_MoveTimer.Tick += new EventHandler(m_MoveTimer_Tick);
-                    m_MoveTimer.Interval = 250;
+                    m_MoveTimer.Interval = moveInterval ;
                     m_MoveTimer.Start();
                 }
 
@@ -207,6 +223,7 @@ namespace MazeScreenSaver
                     while(!mazeGenComplete)
                         mazeGenComplete = RegenMaze();
                     moves = 0;
+                    m_MoveTimer.Interval = moveInterval;
                 }
             }
             catch (Exception error)
@@ -284,7 +301,9 @@ namespace MazeScreenSaver
         void m_MoveTimer_Tick(object sender, EventArgs e)
         {
             if (p.coord == stairsCoords)
+            {
                 newMaze = true;
+            }
             else
             {
                 p.move();
