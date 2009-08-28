@@ -76,23 +76,14 @@ namespace MazeScreenSaver
             return turns * 45;
         }
 
-        public static Direction getDirection(Point from, Point to)
+        public static Direction getDirection(Point delta)
         {
-            Point delta = new Point(0,0);
-            delta.X = to.X - from.X;
-            if(delta.X != 0)
-                delta.X = delta.X / (Math.Abs(delta.X));
-            delta.Y = to.Y - from.Y;
-            if(delta.Y != 0)
-                delta.Y = delta.Y / (Math.Abs(delta.Y));
-
-            Direction retval = Direction.None;
-            foreach (Direction dir in Directions)
+            foreach (Direction d in Directions)
             {
-                if (dir.delta == delta)
-                    retval = dir;
+                if (d.delta == delta)
+                    return d;
             }
-            return retval;
+            return Direction.None;
         }
     }
 }

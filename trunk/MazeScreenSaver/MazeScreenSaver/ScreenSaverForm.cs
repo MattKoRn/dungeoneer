@@ -152,18 +152,22 @@ namespace MazeScreenSaver
                 if (m_Maze != null)
                 {
                     Stopwatch timer = Stopwatch.StartNew();
+                    bool playerOnStairs = (p.coord == stairsCoords);
                     for (int r = 0; r < m_TilesHigh; r++)
                     {
                         for (int c = 0; c < m_TilesWide; c++)
                         {
-                            if (m_Maze[r, c] == -1)
-                                m_WallTile.Draw(e.Graphics, r * 32 + m_OffsetX, c * 32 + m_OffsetY);
-                            else
+                            if (playerOnStairs || p.getKnownMaze(r, c) != -1)
                             {
-                                if (m_Maze[r, c] < MAX_FLOORS)
-                                    m_FloorTiles[m_Maze[r, c]].Draw(e.Graphics, r * 32 + m_OffsetX, c * 32 + m_OffsetY);
+                                if (m_Maze[r, c] == -1)
+                                    m_WallTile.Draw(e.Graphics, r * 32 + m_OffsetX, c * 32 + m_OffsetY);
                                 else
-                                    m_FloorTile.Draw(e.Graphics, r * 32 + m_OffsetX, c * 32 + m_OffsetY);
+                                {
+                                    if (m_Maze[r, c] < MAX_FLOORS)
+                                        m_FloorTiles[m_Maze[r, c]].Draw(e.Graphics, r * 32 + m_OffsetX, c * 32 + m_OffsetY);
+                                    else
+                                        m_FloorTile.Draw(e.Graphics, r * 32 + m_OffsetX, c * 32 + m_OffsetY);
+                                }
                             }
                         }
                     }
@@ -193,7 +197,7 @@ namespace MazeScreenSaver
 
                     m_MoveTimer = new Timer();
                     m_MoveTimer.Tick += new EventHandler(m_MoveTimer_Tick);
-                    m_MoveTimer.Interval = 500;
+                    m_MoveTimer.Interval = 250;
                     m_MoveTimer.Start();
                 }
 
@@ -221,17 +225,26 @@ namespace MazeScreenSaver
                 m_Maze.log = Log;
                 m_Maze.generate();
                 m_Maze.fixFloorType();
-                stairsCoords = m_Maze.RandomSquare();
+                do
+                {
+                    stairsCoords = m_Maze.RandomSquare();
+                } while (stairsCoords.X == 0 || stairsCoords.Y == 0 || stairsCoords.X == m_TilesHigh - 1 || stairsCoords.Y == m_TilesWide - 1);
                 p = new Player();
                 p.log = Log;
                 int tries;
                 tries = 0;
                 bool giveup = false;
+                bool okCoord = false;
                 Point startingCoord;
                 do
                 {
                     startingCoord = m_Maze.RandomSquare();
+                    okCoord = true;
                     tries += 1;
+                    if(startingCoord.X == 0 || startingCoord.Y == 0 || startingCoord.X == m_TilesHigh - 1 || startingCoord.Y == m_TilesWide - 1)
+                        okCoord = false;
+                    if(startingCoord == stairsCoords)
+                        okCoord = false;
                     if (tries > 1000)
                     {
                         Log.Write("Stuck trying to find open square. (tries = " + tries.ToString() + ")", 2);
@@ -242,12 +255,15 @@ namespace MazeScreenSaver
                         Log.Write(squaresString, 2);
                         Log.Write("Anyway, I'm giving up now.", 2);
                         giveup = true;
+                        okCoord = true;
                     }
-                } while (startingCoord.X == stairsCoords.X && startingCoord.Y == stairsCoords.Y && !giveup);
+                } while (!okCoord);
                 if (!giveup)
                 {
-                    p.setStartingCoord(startingCoord);
                     p.stairsCoord = stairsCoords;
+                    p.setMazeSize(m_TilesHigh, m_TilesWide);
+                    p.setStartingCoord(startingCoord);
+                    p.setAvailableMoves(m_Maze.GetAdjacentFloors(p.coord));
                     newMaze = false;
 
                     m_RegenTimer.Stop();
@@ -271,8 +287,8 @@ namespace MazeScreenSaver
                 newMaze = true;
             else
             {
-                p.setAvailableMoves(m_Maze.GetAdjacentFloors(p.coord));
                 p.move();
+                p.setAvailableMoves(m_Maze.GetAdjacentFloors(p.coord));
             }
             this.Invalidate();
         }
